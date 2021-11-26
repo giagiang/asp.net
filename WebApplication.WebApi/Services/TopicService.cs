@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebApplication.WebApi.Data.DbContext;
 using WebApplication.WebApi.Data.Entity;
+using WebApplication.WebApi.ViewModels.Courses;
 using WebApplication.WebApi.ViewModels.Topics;
 
 namespace WebApplication.WebApi.Services
@@ -57,7 +58,22 @@ namespace WebApplication.WebApi.Services
 
         public async Task<List<TopicVm>> GetListAsync()
         {
-            return _mapper.Map<List<Topic>, List<TopicVm>>(await _managementDbContext.Topics.ToListAsync());
+            var query = from t in _managementDbContext.Topics
+                        join c in _managementDbContext.Courses on t.CourseId equals c.Id
+                        select new TopicVm()
+                        {
+                            Courses = _mapper.Map<Course, CourseVm>(c),
+                            CreateTime = t.CreateTime,
+                            Id = t.Id,
+                            Description = t.Description,
+                            Name = t.Name,
+                            UpdateTime = t.UpdateTime,
+                            CreatorId = t.CreatorId,
+                            DeletorId = t.DeletorId,
+                            UpdaterId = t.UpdaterId
+                        };
+
+            return await query.ToListAsync();
         }
     }
 }

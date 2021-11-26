@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApplication.WebApi.ViewModels.Courses;
 
 namespace WebApplication.WebApi.ViewModels.Topics
 {
@@ -14,6 +15,7 @@ namespace WebApplication.WebApi.ViewModels.Topics
         public DateTime? UpdateTime { set; get; }
         public Guid? UpdaterId { set; get; }
         public Guid? DeletorId { set; get; }
-        public Guid Id { set; get; }
+        public Guid? Id { set; get; }
+        public CourseVm Courses { set; get; }
     }
 }
