@@ -9,5 +9,7 @@ namespace WebApplication.WebApi.ViewModels.Courses
     {
         public string Name { set; get; }
         public string Description { set; get; }
+        public DateTime Start_Date { set; get; }
+        public DateTime End_Date { set; get; }
     }
 }
