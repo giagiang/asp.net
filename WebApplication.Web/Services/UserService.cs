@@ -35,7 +35,9 @@ namespace WebApplication.Web.Services
             var response = await client.PostAsync("/api/users/authenticate", httpContent);
             if (response.IsSuccessStatusCode)
             {
-                return JsonConvert.DeserializeObject<ApiSuccessResult<string>>(await response.Content.ReadAsStringAsync());
+                var a = await response.Content.ReadAsStringAsync();
+                var result = JsonConvert.DeserializeObject<string>(a.ToString());
+                return new ApiSuccessResult<string>(result);
             }
 
             return JsonConvert.DeserializeObject<ApiErrorResult<string>>(await response.Content.ReadAsStringAsync());

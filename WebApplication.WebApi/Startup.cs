@@ -38,6 +38,8 @@ namespace WebApplication.WebApi
             services.AddAutoMapper(typeof(Startup));
             //DI
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<ITopicService, TopicService>();
+            services.AddTransient<ICourseService, CourseService>();
             services.AddDbContext<ManagementDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("Default")));
             services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<ManagementDbContext>().AddDefaultTokenProviders();

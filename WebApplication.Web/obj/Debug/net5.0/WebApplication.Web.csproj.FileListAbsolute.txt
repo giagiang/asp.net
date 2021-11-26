@@ -399,3 +399,4 @@ D:\Co loan\WebApplication\WebApplication.Web\bin\Debug\net5.0\WebApplication.Web
 D:\Co loan\WebApplication\WebApplication.Web\obj\Debug\net5.0\WebApplication.Web.Views.pdb
 D:\Co loan\WebApplication\WebApplication.Web\obj\Debug\net5.0\WebApplication.Web.csproj.CopyComplete
 D:\Co loan\WebApplication\WebApplication.Web\obj\Debug\net5.0\WebApplication.Web.genruntimeconfig.cache
+D:\Co loan\WebApplication\WebApplication.Web\obj\Debug\net5.0\Razor\Views\Admin\Index.cshtml.g.cs

@@ -16,6 +16,8 @@ namespace WebApplication.WebApi.Data.DbContext
         }
 
         public DbSet<Class> Classes { set; get; }
+        public DbSet<Topic> Topics { set; get; }
+        public DbSet<Course> Courses { set; get; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

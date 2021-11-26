@@ -9,3 +9,24 @@
 </ul>
 <h3> Login</h3>
 <hr class="soft" />
+<form action="/Account/Login" method="post">
+    <div class="control-group">
+        <label class="control-label" for="inputEmail1">Email</label>
+        <div class="controls">
+            <input class="span3" type="text" asp-for="UserName" placeholder="Email">
+            <span asp-validation-for="UserName" class="text-error"></span>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="inputPassword1">Password</label>
+        <div class="controls">
+            <input type="password" class="span3" asp-for="Password" placeholder="Password">
+            <span asp-validation-for="Password" class="text-error"></span>
+        </div>
+    </div>
+    <div class="control-group">
+        <div class="controls">
+            <button type="submit" class="btn">Sign in</button> <a href="forgetpass.html">Forget password?</a>
+        </div>
+    </div>
+</form>
