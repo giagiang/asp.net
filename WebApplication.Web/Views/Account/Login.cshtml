@@ -8,25 +8,75 @@
     <li class="active">Login</li>
 </ul>
 <h3> Login</h3>
-<hr class="soft" />
-<form action="/Account/Login" method="post">
-    <div class="control-group">
-        <label class="control-label" for="inputEmail1">Email</label>
-        <div class="controls">
-            <input class="span3" type="text" asp-for="UserName" placeholder="Email">
-            <span asp-validation-for="UserName" class="text-error"></span>
+
+
+<div class="wrapper fadeInDown">
+    <div id="formContent">
+        <!-- Tabs Titles -->
+        <h2 class="active"> Sign In </h2>
+        <h2 class="inactive underlineHover"><a href="Register">Sign Up</a></h2>
+
+        <!-- Icon -->
+        <div class="fadeIn first" >
+            <img src="~/image/icon.png" width="40px" height="40px" alt="User Icon"/> 
         </div>
-    </div>
-    <div class="control-group">
-        <label class="control-label" for="inputPassword1">Password</label>
-        <div class="controls">
-            <input type="password" class="span3" asp-for="Password" placeholder="Password">
-            <span asp-validation-for="Password" class="text-error"></span>
+
+        <!-- Login Form -->
+        <div>
+
+
+            <input type="text" id="username" class="fadeIn second" name="login" placeholder="login" value="admin">
+            <input type="text" id="password" class="fadeIn third" name="pass" placeholder="password" value="1">
+            <input type="submit" class="fadeIn fourth" value="Log In" id="loign">
+
+
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            <script>
+                $("#loign").click(() => {
+                    $.ajax({
+                        url: "https://localhost:5001/api/Users/Authenticate",
+                        type: "post",
+                        data: JSON.stringify({ userName: $("#username").val(), password: $("#password").val() }),
+                        contentType: "application/json",
+                        success: function (response) {
+                            console.log(response);
+                            if (response.isSuccessed === true) {
+                                swal({
+                                    title: "Login Success",
+                                    text: "Welcome to Group 2!",
+                                    icon: "success",
+                                    type: "OK"
+                                }).then(function () {
+                                    window.location = "../home/index";
+                                });
+                            }
+
+                            // nếu vào success thì. Đạt phải Điều hướng người dùng tới trang home,
+                            // Nếu role là admin thì vào trang của admin
+                            // ngược lại vào home mặc định
+
+                        },
+                        error: function (err) {
+                            console.log(err);
+                            if (err.status === 400) {
+                                window.swal("Login Fail", "Please try again!", "success",
+                                {
+                                    button: "OK",
+                                });
+                                
+                            }
+                            // Nếu như sai mật khẩu hoặc tài khoản nó sẽ vào đây... Nếu nó vào đây
+                            // Đạt phải thông báo cho người dùng là sai nhập mật
+                        }
+                    })
+                })
+            </script>
         </div>
-    </div>
-    <div class="control-group">
-        <div class="controls">
-            <button type="submit" class="btn">Sign in</button> <a href="forgetpass.html">Forget password?</a>
+
+        <!-- Remind Passowrd -->
+        <div id="formFooter">
+            <a class="underlineHover" href="#">Forgot Password?</a>
         </div>
+
     </div>
-</form>
+</div>

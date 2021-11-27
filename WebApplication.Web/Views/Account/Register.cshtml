@@ -9,3 +9,73 @@
     <li class="active">Registration</li>
 </ul>
 <h3> Registration</h3>
+
+
+<div class="wrapper fadeInDown">
+    <div id="formContent">
+        <!-- Tabs Titles -->
+        <h2 class="inactive underlineHover"><a href="Login">Sign In</a></h2>
+        <h2 class="active">Sign Up </h2>
+
+        <!-- Icon -->
+        <div class="fadeIn first">
+            <img src="~/image/icon.png" width="40px" height="40px" alt="User Icon" />
+        </div>
+
+        <!-- Register Form -->
+        <div>
+            <input type="text" id="username" class="fadeIn second" name="login" placeholder="login" value="dat">
+            <input type="text" id="password" class="fadeIn third" name="pass" placeholder="password" value="Dat@123456">
+            <input type="text" id="email" class="fadeIn third" name="email" placeholder="email" value="dat@gmail.com">
+            <input type="submit" class="fadeIn fourth" value="Sign Up" id="signUp">
+
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            <script>
+                $("#signUp").click(() => {
+                    $.ajax({
+                        url: "https://localhost:5001/api/Users",
+                        type: "post",
+                        data: JSON.stringify({ userName: $("#username").val(), password: $("#password").val(), email: $("#email").val() }),
+                        contentType: "application/json",
+                        success: function (response) {
+                            console.log(response);
+                            if (response === true) {
+                                swal({
+                                    title: "Sign up Success!",
+                                    text: "Welcome to Group 2",
+                                    icon: "success",
+                                    type: "OK"
+                                }).then(function () {
+                                    window.location = "login";
+                                });
+
+                            }
+                            else {
+                                window.swal("Sign Up Fail", "Please try again!", "success", {
+                                    button: "OK",
+
+                                });
+                            }
+                            // nếu vào success thì. Đạt phải Điều hướng người dùng tới trang home,
+                            // Nếu role là admin thì vào trang của admin
+                            // ngược lại vào home mặc định
+
+                        },
+                        error: function (err) {
+                            console.log(err);
+
+                            // Nếu như sai mật khẩu hoặc tài khoản nó sẽ vào đây... Nếu nó vào đây
+                            // Đạt phải thông báo cho người dùng là sai nhập mật
+                        }
+                    })
+                })
+            </script>
+        </div>
+
+        <!-- Remind Passowrd -->
+        <div id="formFooter">
+            <a class="underlineHover" href="#">Welcome to Group 2</a>
+        </div>
+
+    </div>
+</div>
