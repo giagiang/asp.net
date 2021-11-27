@@ -10,8 +10,10 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using WebApplication.WebApi.Data.DbContext;
 using WebApplication.WebApi.Data.Entity;
 using WebApplication.WebApi.ViewModels.Common;
+using WebApplication.WebApi.ViewModels.Courses;
 using WebApplication.WebApi.ViewModels.Users;
 
 namespace WebApplication.WebApi.Services
@@ -28,7 +30,19 @@ namespace WebApplication.WebApi.Services
 
         Task<bool> DeleteAsync(Guid Id);
 
+        Task<ApiResult<bool>> RoleAssign(Guid id, RoleAssignRequest request);
+
+        Task<ApiResult<UserVm>> GetById(Guid id);
+
         Task<bool> PermissionUser(Guid Id, string claimValue);
+
+        Task<List<RoleVm>> GetListRole();
+
+        Task<ApiResult<bool>> CourseAssign(CourseAssignRequest request);
+
+        Task<ApiResult<bool>> ClassAssign(ClassAssignRequest request);
+
+        Task<ApiResult<UserCourseVm>> GetCourseByIdUser(Guid Id);
     }
 
     public class UserService : IUserService
@@ -38,9 +52,11 @@ namespace WebApplication.WebApi.Services
         public readonly RoleManager<AppRole> _roleManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IMapper _mapper;
+        private readonly ManagementDbContext _managementDbContext;
 
-        public UserService(IConfiguration configuration, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMapper mapper)
+        public UserService(IConfiguration configuration, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMapper mapper, ManagementDbContext managementDbContext)
         {
+            _managementDbContext = managementDbContext;
             _mapper = mapper;
             _signInManager = signInManager;
             _configuration = configuration;
@@ -132,6 +148,145 @@ namespace WebApplication.WebApi.Services
             //await _userManager.AddClaimAsync(user, claims);
             //return true;
             throw new Exception();
+        }
+
+        public async Task<ApiResult<bool>> RoleAssign(Guid id, RoleAssignRequest request)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+            {
+                return new ApiErrorResult<bool>("Tài khoản không tồn tại");
+            }
+            var removedRoles = request.Roles.Where(x => x.Selected == false).Select(x => x.Name).ToList();
+            foreach (var roleName in removedRoles)
+            {
+                if (await _userManager.IsInRoleAsync(user, roleName) == true)
+                {
+                    await _userManager.RemoveFromRoleAsync(user, roleName);
+                }
+            }
+            await _userManager.RemoveFromRolesAsync(user, removedRoles);
+
+            var addedRoles = request.Roles.Where(x => x.Selected).Select(x => x.Name).ToList();
+            foreach (var roleName in addedRoles)
+            {
+                if (await _userManager.IsInRoleAsync(user, roleName) == false)
+                {
+                    await _userManager.AddToRoleAsync(user, roleName);
+                }
+            }
+
+            return new ApiSuccessResult<bool>();
+        }
+
+        public async Task<ApiResult<UserVm>> GetById(Guid id)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+            {
+                return new ApiErrorResult<UserVm>("User không tồn tại");
+            }
+            var roles = await _userManager.GetRolesAsync(user);
+            var userVm = new UserVm()
+            {
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                Id = user.Id,
+                UserName = user.UserName,
+                Roles = roles
+            };
+            return new ApiSuccessResult<UserVm>(userVm);
+        }
+
+        public async Task<List<RoleVm>> GetListRole()
+        {
+            return _mapper.Map<List<RoleVm>>(await _roleManager.Roles.ToListAsync());
+        }
+
+        public async Task<ApiResult<bool>> CourseAssign(CourseAssignRequest request)
+        {
+            var user = await _userManager.FindByIdAsync(request.UserId.ToString());
+            var course = await _managementDbContext.Courses.FindAsync(request.CourseId);
+            if (user != null && course != null)
+            {
+                var userCourse = new UserCourse()
+                {
+                    AppUser = user,
+                    Course = course,
+                    CourseId = course.Id,
+                    UserId = user.Id,
+                    UpdateTime = DateTime.Now,
+                };
+                await _managementDbContext.UserCourses.AddAsync(userCourse);
+                await _managementDbContext.SaveChangesAsync();
+                return new ApiSuccessResult<bool>();
+            }
+            return new ApiErrorResult<bool>("User or Course can't find !!");
+        }
+
+        public async Task<ApiResult<bool>> ClassAssign(ClassAssignRequest request)
+        {
+            var user = await _userManager.FindByIdAsync(request.UserId.ToString());
+            var @class = await _managementDbContext.Classes.FindAsync(request.ClassId);
+            if (user != null && @class != null)
+            {
+                var userClass = new UserClass()
+                {
+                    AppUser = user,
+                    Class = @class,
+                    ClassId = @class.Id,
+                    UserId = user.Id,
+                    UpdateTime = DateTime.Now,
+                };
+                await _managementDbContext.UserClasses.AddAsync(userClass);
+                await _managementDbContext.SaveChangesAsync();
+                return new ApiSuccessResult<bool>();
+            }
+            return new ApiErrorResult<bool>("User or Course can't find !!");
+        }
+
+        public async Task<ApiResult<UserCourseVm>> GetCourseByIdUser(Guid Id)
+        {
+            var user = await _userManager.FindByIdAsync(Id.ToString());
+            if (user == null) return new ApiErrorResult<UserCourseVm>("can't find user");
+            var query = from u in _userManager.Users
+                        join uc in _managementDbContext.UserCourses on u.Id equals uc.UserId
+                        join c in _managementDbContext.Courses on uc.CourseId equals c.Id
+                        where u.Id.Equals(Id)
+                        select new { u, uc, c };
+            var result = await query.Select(x => new UserCourseVm()
+            {
+                Courses = _mapper.Map<List<CourseVm>>(x.u.UserCourses.Select(x => x.Course)),
+                Email = x.u.Email,
+                FullName = x.u.FullName,
+                Id = x.u.Id,
+                PhoneNumber = x.u.PhoneNumber,
+                UserName = x.u.UserName
+            }).FirstOrDefaultAsync();
+
+            return new ApiSuccessResult<UserCourseVm>(result);
+        }
+
+        public async Task<ApiResult<UserCourseVm>> GetCLassByIdUser(Guid Id)
+        {
+            var user = await _userManager.FindByIdAsync(Id.ToString());
+            if (user == null) return new ApiErrorResult<UserCourseVm>("can't find user");
+            var query = from u in _userManager.Users
+                        join uc in _managementDbContext.UserClasses on u.Id equals uc.UserId
+                        join c in _managementDbContext.Courses on uc.ClassId equals c.Id
+                        where u.Id.Equals(Id)
+                        select new { u, uc, c };
+            var result = await query.Select(x => new UserCourseVm()
+            {
+                Courses = _mapper.Map<List<CourseVm>>(x.u.UserClasses.Select(x => x.Class)),
+                Email = x.u.Email,
+                FullName = x.u.FullName,
+                Id = x.u.Id,
+                PhoneNumber = x.u.PhoneNumber,
+                UserName = x.u.UserName
+            }).FirstOrDefaultAsync();
+
+            return new ApiSuccessResult<UserCourseVm>(result);
         }
     }
 }

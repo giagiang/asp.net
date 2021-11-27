@@ -40,6 +40,7 @@ namespace WebApplication.WebApi
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<ITopicService, TopicService>();
             services.AddTransient<ICourseService, CourseService>();
+            services.AddTransient<IClassService, CLassService>();
             services.AddDbContext<ManagementDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("Default")));
             services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<ManagementDbContext>().AddDefaultTokenProviders();

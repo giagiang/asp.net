@@ -1,8 +1,26 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-
+@section Scripts{
+    <script>
+        let html = "<div class='row'>";
+        $.ajax({
+            url: "https://localhost:5001/api/Topics",
+            type: "GET",
+            success: function (response) {
+                for (let i of response) {
+                    html += `<div class='card col-4'><div class="card-header">Tiêu đề:  `+i.name+`  ></div><div class="card-body"><h2>Tên môn học:  `+ i.courses.name +` </h2><small></small><p>Mô tả + i.description + </p>Thời gian bắt đầu khóa học:  + moment(i.courses.start_Date).format("DD/MM/YYYY") + </div></div>`
+                }
+                console.log(moment().format())
+                html += "</div>"
+                $("#content").html(html);
+            }
+        })
+    </script>
+}
 <div class="text-center">
+    <div id="content"></div>
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
 </div>

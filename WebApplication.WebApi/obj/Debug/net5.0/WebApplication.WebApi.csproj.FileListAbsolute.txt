@@ -63,3 +63,5 @@ D:\Co loan\WebApplication\WebApplication.WebApi\obj\Debug\net5.0\WebApplication.
 D:\Co loan\WebApplication\WebApplication.WebApi\obj\Debug\net5.0\ref\WebApplication.WebApi.dll
 D:\Co loan\WebApplication\WebApplication.WebApi\obj\Debug\net5.0\WebApplication.WebApi.pdb
 D:\Co loan\WebApplication\WebApplication.WebApi\obj\Debug\net5.0\WebApplication.WebApi.genruntimeconfig.cache
+D:\Co loan\WebApplication\WebApplication.WebApi\bin\Debug\net5.0\Humanizer.dll
+D:\Co loan\WebApplication\WebApplication.WebApi\bin\Debug\net5.0\Microsoft.EntityFrameworkCore.Design.dll

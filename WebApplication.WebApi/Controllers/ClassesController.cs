@@ -2,54 +2,54 @@
 using System;
 using System.Threading.Tasks;
 using WebApplication.WebApi.Services;
+using WebApplication.WebApi.ViewModels.Classes;
 using WebApplication.WebApi.ViewModels.Common;
-using WebApplication.WebApi.ViewModels.Courses;
 
 namespace WebApplication.WebApi.Controllers
 {
-    public class CoursesController : BaseController
+    public class ClassesController : BaseController
     {
-        private readonly ICourseService _courseService;
+        private readonly IClassService _classService;
 
-        public CoursesController(ICourseService courseService)
+        public ClassesController(IClassService classService)
         {
-            _courseService = courseService;
+            _classService = classService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetListAsync([FromQuery] PagedAndSortedResultRequestDto requestDto)
         {
-            return Ok(await _courseService.GetListAsync(requestDto));
+            return Ok(await _classService.GetListAsync(requestDto));
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateAsync([FromBody] CreateCourseDto dto)
+        public async Task<IActionResult> CreateAsync([FromBody] CreateClassDto dto)
         {
-            return Ok(await _courseService.CreateAsync(dto));
+            return Ok(await _classService.CreateAsync(dto));
         }
 
         [HttpDelete("{Id}")]
         public async Task<IActionResult> DeleteAsync(Guid Id)
         {
-            return Ok(await _courseService.DeleteAsync(Id));
+            return Ok(await _classService.DeleteAsync(Id));
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateAsync([FromBody] UpdateCourseDto dto)
+        public async Task<IActionResult> UpdateAsync([FromBody] UpdateClassDto dto)
         {
-            return Ok(await _courseService.UpdateAsync(dto));
+            return Ok(await _classService.UpdateAsync(dto));
         }
 
         [HttpGet("{Id}")]
         public async Task<IActionResult> GetById(Guid Id)
         {
-            return Ok(await _courseService.GetById(Id));
+            return Ok(await _classService.GetById(Id));
         }
 
         [HttpGet("all")]
         public async Task<IActionResult> GetAllListAsync([FromQuery] PagedAndSortedResultRequestDto requestDto)
         {
-            return Ok(await _courseService.GetAllListAsync(requestDto));
+            return Ok(await _classService.GetAllListAsync(requestDto));
         }
     }
 }

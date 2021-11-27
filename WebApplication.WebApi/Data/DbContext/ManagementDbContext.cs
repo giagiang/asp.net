@@ -17,7 +17,10 @@ namespace WebApplication.WebApi.Data.DbContext
 
         public DbSet<Class> Classes { set; get; }
         public DbSet<Topic> Topics { set; get; }
+        public DbSet<UserCourse> UserCourses { set; get; }
         public DbSet<Course> Courses { set; get; }
+        public DbSet<Category> Categories { set; get; }
+        public DbSet<UserClass> UserClasses { set; get; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

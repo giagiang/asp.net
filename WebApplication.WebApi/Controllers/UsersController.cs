@@ -62,19 +62,57 @@ namespace WebApplication.WebApi.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("notify")]
-        public async Task<IActionResult> Test(string message)
-        {
-            await _hubContext.Clients.All.SendAsync("notify", message);
-            return Ok();
-        }
-
         [HttpPost("addpresmission")]
         public async Task<IActionResult> AddPermission(Guid Id, string claimValue)
         {
             var kq = await _userService.PermissionUser(Id, claimValue);
             if (kq == true) return Ok(kq);
             return BadRequest(false);
+        }
+
+        [HttpPut("{id}/roles")]
+        public async Task<IActionResult> RoleAssign(Guid id, [FromBody] RoleAssignRequest request)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await _userService.RoleAssign(id, request);
+            if (!result.IsSuccessed)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(Guid id)
+        {
+            var user = await _userService.GetById(id);
+            return Ok(user);
+        }
+
+        [HttpGet("GetListRole")]
+        public async Task<IActionResult> GetListRole()
+        {
+            return Ok(await _userService.GetListRole());
+        }
+
+        [HttpPost("CourseAssign")]
+        public async Task<IActionResult> CourseAssign(CourseAssignRequest request)
+        {
+            return Ok(await _userService.CourseAssign(request));
+        }
+
+        [HttpPost("ClassAssign")]
+        public async Task<IActionResult> ClassAssign(ClassAssignRequest request)
+        {
+            return Ok(await _userService.ClassAssign(request));
+        }
+
+        [HttpGet("GetCourseByUserId")]
+        public async Task<IActionResult> GetCourseByUserId(Guid Id)
+        {
+            return Ok(await _userService.GetCourseByIdUser(Id));
         }
     }
 }
