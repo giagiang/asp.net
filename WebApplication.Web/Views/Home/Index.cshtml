@@ -4,58 +4,33 @@
 
 @section Scripts{
     <script>
-        let html = "<div class='row'>";
+        let html = ""
         $.ajax({
             url: "https://localhost:5001/api/Topics",
             type: "GET",
             success: function (response) {
-                for (let i of response) {
-                    html += '<div class="col span-1-of-3 about-picture"><div class="card-header">Tiêu đề:  ' + i.name + ' ></div><div class="card-body"><h2>Tên môn học:  ' + i.courses.name +' </h2><small></small><p>Mô tả ' + i.description + ' </p>Thời gian bắt đầu khóa học: ' + moment(i.courses.start_Date).format("DD/MM/YYYY") + ' </div></div>'
+                for (let i of response.items) {
+                    console.log(i)
+                    html += `<div class="col span-1-of-3 about-picture">
+                        <img src="" class="card-img-top margin-auto" alt="alternativeffff">
+                        <div class="card-body">
+                            <h4 class="card-title pt-3 title-edit">`+ i.name + `</h4>
+                            <p class="card-text text-edit text-cardedit">`+ i.courses.name + `<br> ` + i.description + `</p>
+                            <a href="#" class="btn btn-center btn-primary pt-3 margin-auto">Go somewhere</a>
+                        </div>
+                    </div>`
                 }
                 console.log(moment().format())
-                html += "</div>"
                 $("#content").html(html);
             }
         })
     </script>
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    <div id="content"></div>
-
-</div>
-
-
-
-<!--<section class="Courses-section" id="Courses">
+<section class="Courses-section" id="Courses">
     <div class="row">
         <h2>Courses</h2>
-        <div class="col span-1-of-3 about-picture">
-            <img src="~/img/xUntitled-1.jpg.pagespeed.ic.KRwJEXGGaK.jpg" class="card-img-top margin-auto" alt="alternativeffff">
-            <div class="card-body">
-                <h4 class="card-title pt-3 title-edit">Information Technology</h4>
-                <p class="card-text text-edit text-cardedit">Artificial Intelligence Programming(AI)<br> Computer Science</p>
-                <a href="#" class="btn btn-center btn-primary pt-3 margin-auto">Go somewhere</a>
-            </div>
-        </div>
-        <div class="col span-1-of-3 about-picture">
-            <img src="~/img/xClip-Group1_.png.pagespeed.ic.oj4ZY7iNIb.png" class="card-img-top margin-auto" alt="alternativeffff">
-            <div class="card-body">
-                <h4 class="card-title pt-3 title-edit">Graphic Design</h4>
-                <p class="card-text text-edit text-cardedit">International Graphic Design & Fine Arts</p>
-                <a href="#" class="btn btn-center btn-primary pt-3 margin-auto">Go somewhere</a>
-            </div>
-        </div>
-        <div class="col span-1-of-3 about-picture">
-            <img src="~/img/xktqt.png.pagespeed.ic.w6rGHEff5N.png" class="card-img-top margin-auto" alt="alternativeffff">
-            <div class="card-body">
-                <h4 class="card-title pt-3 title-edit">International Economic Sector</h4>
-                <p class="card-text text-edit text-cardedit">International marketing <br>International Finance <br> Business Administration</p>
-                <a href="#" class="btn btn-center btn-primary pt-3 margin-auto">Go somewhere</a>
-            </div>
-        </div>
+        <div id="content"></div>
     </div>
 </section>
 <section class="contact-section" id="contact">
@@ -105,4 +80,4 @@
             </form>
         </div>
     </div>
-</section>-->
+</section>
