@@ -39,15 +39,27 @@
                         data: JSON.stringify({ userName: $("#username").val(), password: $("#password").val() }),
                         contentType: "application/json",
                         success: function (response) {
-                            console.log(response);
-                            if (response.isSuccessed === true) {
+                            localStorage.setItem("user", JSON.stringify(response.resultObj));
+                            if (response.resultObj.roles.length!==0) {
+                                 //Đây là tài khoản có quyền truy cập vào trang của admin
                                 swal({
                                     title: "Login Success",
                                     text: "Welcome to Group 2!",
                                     icon: "success",
                                     type: "OK"
                                 }).then(function () {
-                                    window.location = "../home/index";
+                                    window.location = "/admin";
+                                });
+                            }
+                            else {
+                                 //Đây là tài khoản bình thường của người dùng
+                                swal({
+                                    title: "Login Success",
+                                    text: "Welcome to Group 2!",
+                                    icon: "success",
+                                    type: "OK"
+                                }).then(function () {
+                                    window.location = "/";
                                 });
                             }
 

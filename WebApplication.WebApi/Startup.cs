@@ -43,7 +43,14 @@ namespace WebApplication.WebApi
             services.AddTransient<IClassService, CLassService>();
             services.AddDbContext<ManagementDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("Default")));
-            services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<ManagementDbContext>().AddDefaultTokenProviders();
+            services.AddIdentity<AppUser, AppRole>(options =>
+            {
+                options.Password.RequiredLength = 1;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireDigit = false;
+            }).AddEntityFrameworkStores<ManagementDbContext>().AddDefaultTokenProviders();
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
