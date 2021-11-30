@@ -1,19 +1,26 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+
 @section Scripts{
     <script>
-        let html = "<div class='row'>";
+        let html = ""
         $.ajax({
             url: "https://localhost:5001/api/Topics",
             type: "GET",
             success: function (response) {
-                console.log(response)
                 for (let i of response.items) {
-                    html += `<div class='card col-4'><div class="card-header">Tiêu đề:  ` + i.name + `  ></div><div class="card-body"><h2>Tên môn học:  ` + i.courses.name + ` </h2><small></small><p>Mô tả + i.description + </p>Thời gian bắt đầu khóa học:  + moment(i.courses.start_Date).format("DD/MM/YYYY") + </div></div>`
+                    console.log(i)
+                    html += `<div class="col span-1-of-3 about-picture">
+                                    <img src="" class="card-img-top margin-auto" alt="alternativeffff">
+                                    <div class="card-body">
+                                        <h4 class="card-title pt-3 title-edit">`+ i.name + `</h4>
+                                        <p class="card-text text-edit text-cardedit">`+ i.courses.name + `<br> ` + i.description + `</p>
+                                        <a href="#" class="btn btn-center btn-primary pt-3 margin-auto">Go somewhere</a>
+                                    </div>
+                                </div>`
                 }
                 console.log(moment().format())
-                html += "</div>"
                 $("#content").html(html);
             }
         })
@@ -30,8 +37,58 @@
         })
     </script>
 }
-<div class="text-center">
-    <div id="content"></div>
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+
+<section class="Courses-section" id="Courses">
+    <div class="row">
+        <h2>Courses</h2>
+        <div id="content"></div>
+    </div>
+</section>
+<section class="contact-section" id="contact">
+    <div class="row">
+        <div class="col span-1-of-3">
+            <ul class="information">
+                <li> <i class="fas fa-map-market-alt"></i>Address: 21A, fastboy street, Thanh Hoa</li>
+                <li> <i class="fas fa-envelope"></i> Email: fastboyteam@edu.com</li>
+                <li> <i class="fas fa-phone"></i>Phone Number:096-234-4567</li>
+            </ul>
+            <ul class="social-icons">
+                <li><i class="fab fa-facebook"></i></li>
+                <li><i class="fab fa-twitter-square"></i></li>
+                <li><i class="fab fa-instagram"></i></li>
+                <li><i class="fab fa-google-plus-square"></i></li>
+            </ul>
+        </div>
+        <div class="col span-2-of-3">
+            <form>
+                <div class="row">
+                    <div class="col span-1-of-3">
+                        <label>Name</label>
+                    </div>
+                    <div class="col span-2-of-3">
+                        <input type="text" placeholder="Your Name">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col span-1-of-3">
+                        <label> Email</label>
+                    </div>
+                    <div class="col span-2-of-3">
+                        <input type="text" placeholder="Your Email">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col span-1-of-3">
+                        <label> Message</label>
+                    </div>
+                    <div class="col span-2-of-3">
+                        <textarea placeholder="Your Message"></textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <input type="submit" class="btn" value="Sent It">
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
