@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using WebApplication.WebApi.Data.DbContext;
 using WebApplication.WebApi.Data.Entity;
@@ -33,17 +36,28 @@ namespace WebApplication.WebApi.Services
         private readonly ManagementDbContext _managementDbContext;
         private readonly IMapper _mapper;
         private readonly UserManager<AppUser> _userManager;
+        private readonly IStorageService _storageService;
 
-        public CourseService(ManagementDbContext managementDbContext, IMapper mapper, UserManager<AppUser> userManager)
+        public CourseService(ManagementDbContext managementDbContext, IMapper mapper, UserManager<AppUser> userManager, IStorageService storageService)
         {
+            _storageService = storageService;
             _userManager = userManager;
             _mapper = mapper;
             _managementDbContext = managementDbContext;
         }
 
+        private async Task<string> SaveFile(IFormFile file)
+        {
+            var originalFileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(originalFileName)}";
+            await _storageService.SaveFileAsync(file.OpenReadStream(), fileName);
+            return fileName;
+        }
+
         public async Task<CourseVm> CreateAsync(CreateCourseDto dto)
         {
             var course = _mapper.Map<CreateCourseDto, Course>(dto);
+            course.Image = await SaveFile(dto.Image);
             course.CreateTime = DateTime.Now;
             var result = await _managementDbContext.Courses.AddAsync(course);
             await _managementDbContext.SaveChangesAsync();
@@ -95,7 +109,8 @@ namespace WebApplication.WebApi.Services
                 Description = x.Description,
                 Id = x.Id,
                 Start_Date = x.Start_Date,
-                End_Date = x.End_Date
+                End_Date = x.End_Date,
+                Image=x.Image
             }).ToList();
 
             return new PagedResultDto<CourseVm>

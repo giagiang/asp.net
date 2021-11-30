@@ -92,6 +92,13 @@ namespace WebApplication.WebApi.Migrations
                     b.HasKey("UserId", "RoleId");
 
                     b.ToTable("UserRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = new Guid("0027068e-4c5d-4ecb-a157-b9cc063cd672"),
+                            RoleId = new Guid("cc88ab6f-5d66-4c30-a60e-8f5254f1e112")
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
@@ -132,6 +139,15 @@ namespace WebApplication.WebApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("cc88ab6f-5d66-4c30-a60e-8f5254f1e112"),
+                            ConcurrencyStamp = "ab80aadf-5170-43fa-9677-3067474c9e50",
+                            Name = "admin",
+                            NormalizedName = "admin"
+                        });
                 });
 
             modelBuilder.Entity("WebApplication.WebApi.Data.Entity.AppUser", b =>
@@ -194,14 +210,14 @@ namespace WebApplication.WebApi.Migrations
                         {
                             Id = new Guid("0027068e-4c5d-4ecb-a157-b9cc063cd672"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "b6aa3605-d632-40d2-9fe5-6073c31b708f",
+                            ConcurrencyStamp = "01bd89ee-55c4-4af2-97ac-053c9ebedbc2",
                             Email = "huynabhaf190133@fpt.edu.vn",
                             EmailConfirmed = true,
                             FullName = "Nguyen Anh Huy",
                             LockoutEnabled = false,
                             NormalizedEmail = "huynabhaf190133@fpt.edu.vn",
                             NormalizedUserName = "admin",
-                            PasswordHash = "AQAAAAEAACcQAAAAEA9NFLhGfPdW1GjBQXexvw8sebHaw/9F/FZWiuq7bIbN81pFOqKYtR6TzDWDu/g+7g==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEE4YnW+XXxuWHM3+Z+2Bcx1eQ1EPeSNMiXb3vI6reRjeEUkZO8KUuRhFvm2sQ/a0Dw==",
                             PhoneNumber = "0399056507",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
@@ -295,6 +311,9 @@ namespace WebApplication.WebApi.Migrations
                     b.Property<DateTime>("End_Date")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -361,6 +380,9 @@ namespace WebApplication.WebApi.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Image")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")

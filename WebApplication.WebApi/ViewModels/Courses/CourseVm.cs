@@ -18,6 +18,7 @@ namespace WebApplication.WebApi.ViewModels.Courses
         public DateTime? UpdateTime { set; get; }
         public Guid? UpdaterId { set; get; }
         public Guid? DeletorId { set; get; }
+        public string Image { set; get; }
         public List<UserVm> User { set; get; }
     }
 }

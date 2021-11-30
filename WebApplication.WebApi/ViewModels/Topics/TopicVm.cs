@@ -16,6 +16,7 @@ namespace WebApplication.WebApi.ViewModels.Topics
         public Guid? UpdaterId { set; get; }
         public Guid? DeletorId { set; get; }
         public Guid? Id { set; get; }
+        public string Image { set; get; }
         public CourseVm Courses { set; get; }
     }
 }

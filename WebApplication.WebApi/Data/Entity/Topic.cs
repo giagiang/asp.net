@@ -9,6 +9,7 @@ namespace WebApplication.WebApi.Data.Entity
     {
         public string Name { set; get; }
         public string Description { set; get; }
+        public string Image { set; get; }
         public Course Course { set; get; }
         public Guid CourseId { set; get; }
     }

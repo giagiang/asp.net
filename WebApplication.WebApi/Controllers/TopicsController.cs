@@ -23,7 +23,7 @@ namespace WebApplication.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateAsync([FromBody] TopicCreateDto dto)
+        public async Task<IActionResult> CreateAsync([FromForm] TopicCreateDto dto)
         {
             return Ok(await _topicService.CreateAsync(dto));
         }

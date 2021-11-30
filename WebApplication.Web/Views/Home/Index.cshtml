@@ -4,21 +4,22 @@
 
 @section Scripts{
     <script>
-        let html = ""
+        let html = "";
+        const urlImg = "https://localhost:5001/store-image/";
         $.ajax({
             url: "https://localhost:5001/api/Topics",
             type: "GET",
             success: function (response) {
+                console.log(response.items)
                 for (let i of response.items) {
-                    console.log(i)
                     html += `<div class="col span-1-of-3 about-picture">
-                                    <img src="" class="card-img-top margin-auto" alt="alternativeffff">
-                                    <div class="card-body">
-                                        <h4 class="card-title pt-3 title-edit">`+ i.name + `</h4>
-                                        <p class="card-text text-edit text-cardedit">`+ i.courses.name + `<br> ` + i.description + `</p>
-                                        <a href="#" class="btn btn-center btn-primary pt-3 margin-auto">Go somewhere</a>
-                                    </div>
-                                </div>`
+                                        <img src=`+urlImg+i.courses.image +` class="card-img-top margin-auto" alt="alternativeffff">
+                                        <div class="card-body">
+                                            <h4 class="card-title pt-3 title-edit">`+ i.name + `</h4>
+                                            <p class="card-text text-edit text-cardedit">`+ i.courses.name + `<br> ` + i.description + `</p>
+                                            <a href="#" class="btn btn-center btn-primary pt-3 margin-auto">Go somewhere</a>
+                                        </div>
+                                    </div>`
                 }
                 console.log(moment().format())
                 $("#content").html(html);
@@ -28,7 +29,7 @@
         $(document).ready(() => {
             const dataLocalStorage = localStorage.getItem("user");
             if (dataLocalStorage == undefined) {
-                window.location = "https://localhost:5201/account/login";
+                $("#login").html(`<a class="nav-link text-dark" asp-area="" href='/account/login'>Login</a>`);
             }
             if (dataLocalStorage) {
                 console.log("vo")

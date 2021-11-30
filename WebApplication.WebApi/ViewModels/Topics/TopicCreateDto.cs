@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 
 namespace WebApplication.WebApi.ViewModels.Topics
 {
@@ -6,6 +7,7 @@ namespace WebApplication.WebApi.ViewModels.Topics
     {
         public string Name { set; get; }
         public string Description { set; get; }
+        public IFormFile Image { set; get; }
         public Guid CourseId { set; get; }
     }
 }

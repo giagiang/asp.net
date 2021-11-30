@@ -23,7 +23,7 @@ namespace WebApplication.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateAsync([FromBody] CreateCourseDto dto)
+        public async Task<IActionResult> CreateAsync([FromForm] CreateCourseDto dto)
         {
             return Ok(await _courseService.CreateAsync(dto));
         }

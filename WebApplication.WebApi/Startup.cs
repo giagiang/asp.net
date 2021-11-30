@@ -41,6 +41,7 @@ namespace WebApplication.WebApi
             services.AddTransient<ITopicService, TopicService>();
             services.AddTransient<ICourseService, CourseService>();
             services.AddTransient<IClassService, CLassService>();
+            services.AddTransient<IStorageService, FileStorageService>();
             services.AddDbContext<ManagementDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("Default")));
             services.AddIdentity<AppUser, AppRole>(options =>
@@ -116,6 +117,8 @@ namespace WebApplication.WebApi
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            app.UseStaticFiles();
+            app.UseHttpsRedirection();
             // global cors policy
             app.UseCors(x => x
                 .AllowAnyMethod()

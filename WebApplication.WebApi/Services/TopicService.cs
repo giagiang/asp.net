@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using WebApplication.WebApi.Data.DbContext;
 using WebApplication.WebApi.Data.Entity;
@@ -33,17 +36,28 @@ namespace WebApplication.WebApi.Services
         private readonly ManagementDbContext _managementDbContext;
         private readonly IMapper _mapper;
         private readonly UserManager<AppUser> _userManager;
+        private readonly IStorageService _storageService;
 
-        public TopicService(ManagementDbContext managementDbContext, IMapper mapper, UserManager<AppUser> userManager)
+        public TopicService(ManagementDbContext managementDbContext, IMapper mapper, UserManager<AppUser> userManager, IStorageService storageService)
         {
+            _storageService = storageService;
             _userManager = userManager;
             _mapper = mapper;
             _managementDbContext = managementDbContext;
         }
 
+        private async Task<string> SaveFile(IFormFile file)
+        {
+            var originalFileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(originalFileName)}";
+            await _storageService.SaveFileAsync(file.OpenReadStream(), fileName);
+            return fileName;
+        }
+
         public async Task<TopicVm> CreateAsync(TopicCreateDto dto)
         {
             var t = _mapper.Map<TopicCreateDto, Topic>(dto);
+            t.Image = await SaveFile(dto.Image);
             t.CreateTime = DateTime.Now;
             var topic = await _managementDbContext.Topics.AddAsync(t);
             await _managementDbContext.SaveChangesAsync();
@@ -80,7 +94,8 @@ namespace WebApplication.WebApi.Services
                             UpdateTime = t.UpdateTime,
                             CreatorId = t.CreatorId,
                             DeletorId = t.DeletorId,
-                            UpdaterId = t.UpdaterId
+                            UpdaterId = t.UpdaterId,
+                            Image = t.Image
                         };
             if (!string.IsNullOrWhiteSpace(request.Filter))
             {
@@ -118,7 +133,8 @@ namespace WebApplication.WebApi.Services
                             UpdateTime = t.UpdateTime,
                             CreatorId = t.CreatorId,
                             DeletorId = t.DeletorId,
-                            UpdaterId = t.UpdaterId
+                            UpdaterId = t.UpdaterId,
+                            Image = t.Image
                         };
             return await query.FirstOrDefaultAsync();
         }
