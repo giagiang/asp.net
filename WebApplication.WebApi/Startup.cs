@@ -32,7 +32,7 @@ namespace WebApplication.WebApi
             services.AddControllers();
             services.AddCors();
             services.AddSignalR();
-
+            services.AddHttpContextAccessor();
             //AutoMapper
 
             services.AddAutoMapper(typeof(Startup));
@@ -119,13 +119,14 @@ namespace WebApplication.WebApi
             app.UseRouting();
             app.UseStaticFiles();
             app.UseHttpsRedirection();
+            app.UseAuthentication();
+
             // global cors policy
             app.UseCors(x => x
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .SetIsOriginAllowed(origin => true) // allow any origin
                 .AllowCredentials()); // allow credentials
-
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

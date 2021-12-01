@@ -1,0 +1,9 @@
+.action-center {
+    display: flex;
+    justify-content: space-between
+}
+
+.image-topic {
+    height: 60px;
+    width: 100px
+}

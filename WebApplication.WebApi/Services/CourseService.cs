@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using WebApplication.WebApi.Data.DbContext;
 using WebApplication.WebApi.Data.Entity;
@@ -37,13 +38,15 @@ namespace WebApplication.WebApi.Services
         private readonly IMapper _mapper;
         private readonly UserManager<AppUser> _userManager;
         private readonly IStorageService _storageService;
+        private Guid UserId;
 
-        public CourseService(ManagementDbContext managementDbContext, IMapper mapper, UserManager<AppUser> userManager, IStorageService storageService)
+        public CourseService(IHttpContextAccessor httpContextAccessor, ManagementDbContext managementDbContext, IMapper mapper, UserManager<AppUser> userManager, IStorageService storageService)
         {
             _storageService = storageService;
             _userManager = userManager;
             _mapper = mapper;
             _managementDbContext = managementDbContext;
+            UserId = new Guid(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         }
 
         private async Task<string> SaveFile(IFormFile file)
@@ -59,6 +62,7 @@ namespace WebApplication.WebApi.Services
             var course = _mapper.Map<CreateCourseDto, Course>(dto);
             course.Image = await SaveFile(dto.Image);
             course.CreateTime = DateTime.Now;
+            course.CreatorId = UserId;
             var result = await _managementDbContext.Courses.AddAsync(course);
             await _managementDbContext.SaveChangesAsync();
             return _mapper.Map<Course, CourseVm>(result.Entity);
@@ -110,7 +114,7 @@ namespace WebApplication.WebApi.Services
                 Id = x.Id,
                 Start_Date = x.Start_Date,
                 End_Date = x.End_Date,
-                Image=x.Image
+                Image = x.Image
             }).ToList();
 
             return new PagedResultDto<CourseVm>
@@ -122,13 +126,14 @@ namespace WebApplication.WebApi.Services
 
         public async Task<CourseVm> UpdateAsync(UpdateCourseDto dto)
         {
-            var topic = await _managementDbContext.Courses.FindAsync(dto.Id);
-            if (topic != null) return null;
-            topic.Name = dto.Name;
-            topic.UpdateTime = DateTime.Now;
-            topic.Description = dto.Description;
+            var course = await _managementDbContext.Courses.FindAsync(dto.Id);
+            if (course != null) return null;
+            course.Name = dto.Name;
+            course.UpdateTime = DateTime.Now;
+            course.Description = dto.Description;
+            course.UpdaterId = UserId;
             await _managementDbContext.SaveChangesAsync();
-            return _mapper.Map<CourseVm>(topic);
+            return _mapper.Map<CourseVm>(course);
         }
 
         public async Task<PagedResultDto<CourseVm>> GetAllListAsync(PagedAndSortedResultRequestDto request)

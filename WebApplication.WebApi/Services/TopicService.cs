@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using WebApplication.WebApi.Data.DbContext;
 using WebApplication.WebApi.Data.Entity;
@@ -37,13 +38,15 @@ namespace WebApplication.WebApi.Services
         private readonly IMapper _mapper;
         private readonly UserManager<AppUser> _userManager;
         private readonly IStorageService _storageService;
+        private Guid UserId;
 
-        public TopicService(ManagementDbContext managementDbContext, IMapper mapper, UserManager<AppUser> userManager, IStorageService storageService)
+        public TopicService(IHttpContextAccessor httpContextAccessor, ManagementDbContext managementDbContext, IMapper mapper, UserManager<AppUser> userManager, IStorageService storageService)
         {
             _storageService = storageService;
             _userManager = userManager;
             _mapper = mapper;
             _managementDbContext = managementDbContext;
+            UserId = new Guid(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         }
 
         private async Task<string> SaveFile(IFormFile file)
@@ -59,6 +62,7 @@ namespace WebApplication.WebApi.Services
             var t = _mapper.Map<TopicCreateDto, Topic>(dto);
             t.Image = await SaveFile(dto.Image);
             t.CreateTime = DateTime.Now;
+            t.CreatorId = UserId;
             var topic = await _managementDbContext.Topics.AddAsync(t);
             await _managementDbContext.SaveChangesAsync();
             if (topic != null)
@@ -93,7 +97,6 @@ namespace WebApplication.WebApi.Services
                             Name = t.Name,
                             UpdateTime = t.UpdateTime,
                             CreatorId = t.CreatorId,
-                            DeletorId = t.DeletorId,
                             UpdaterId = t.UpdaterId,
                             Image = t.Image
                         };
@@ -114,6 +117,7 @@ namespace WebApplication.WebApi.Services
             topic.Name = dto.Name;
             topic.UpdateTime = DateTime.Now;
             topic.Description = dto.Description;
+            topic.UpdaterId = UserId;
             if (dto.CourseId != Guid.Empty) topic.CourseId = dto.CourseId;
             await _managementDbContext.SaveChangesAsync();
             return _mapper.Map<TopicVm>(topic);
@@ -132,7 +136,6 @@ namespace WebApplication.WebApi.Services
                             Name = t.Name,
                             UpdateTime = t.UpdateTime,
                             CreatorId = t.CreatorId,
-                            DeletorId = t.DeletorId,
                             UpdaterId = t.UpdaterId,
                             Image = t.Image
                         };

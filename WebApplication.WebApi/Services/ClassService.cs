@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using WebApplication.WebApi.Data.DbContext;
 using WebApplication.WebApi.Data.Entity;
@@ -33,18 +35,21 @@ namespace WebApplication.WebApi.Services
         private readonly ManagementDbContext _managementDbContext;
         private readonly IMapper _mapper;
         private readonly UserManager<AppUser> _userManager;
+        private Guid UserId;
 
-        public CLassService(ManagementDbContext managementDbContext, IMapper mapper, UserManager<AppUser> userManager)
+        public CLassService(IHttpContextAccessor httpContextAccessor, ManagementDbContext managementDbContext, IMapper mapper, UserManager<AppUser> userManager)
         {
             _userManager = userManager;
             _mapper = mapper;
             _managementDbContext = managementDbContext;
+            UserId = new Guid(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         }
 
         public async Task<ClassVm> CreateAsync(CreateClassDto dto)
         {
             var t = _mapper.Map<CreateClassDto, Class>(dto);
             t.CreateTime = DateTime.Now;
+            t.CreatorId = UserId;
             var topic = await _managementDbContext.Classes.AddAsync(t);
             await _managementDbContext.SaveChangesAsync();
             if (topic != null)
@@ -100,6 +105,7 @@ namespace WebApplication.WebApi.Services
             topic.Name = dto.Name;
             topic.UpdateTime = DateTime.Now;
             topic.Description = dto.Description;
+            topic.UpdaterId = UserId;
             await _managementDbContext.SaveChangesAsync();
             return _mapper.Map<ClassVm>(topic);
         }

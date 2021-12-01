@@ -27,13 +27,13 @@
         })
 
         $(document).ready(() => {
-            const dataLocalStorage = localStorage.getItem("user");
+            const dataLocalStorage = sessionStorage.getItem("user");
             if (dataLocalStorage == undefined) {
                 $("#login").html(`<a class="nav-link text-dark" asp-area="" href='/account/login'>Login</a>`);
             }
             if (dataLocalStorage) {
                 console.log("vo")
-                $("#logout").html(`<a class="nav-link text-dark" asp-area="" onclick="localStorage.removeItem('user')" href='/'>Logout</a>`);
+                $("#logout").html(`<a class="nav-link text-dark" asp-area="" onclick="sessionStorage.removeItem('user')" href='/'>Logout</a>`);
             }
         })
     </script>

@@ -144,7 +144,7 @@ namespace WebApplication.WebApi.Migrations
                         new
                         {
                             Id = new Guid("cc88ab6f-5d66-4c30-a60e-8f5254f1e112"),
-                            ConcurrencyStamp = "ab80aadf-5170-43fa-9677-3067474c9e50",
+                            ConcurrencyStamp = "381f77d0-2a59-42f1-8414-608f20b5e39d",
                             Name = "admin",
                             NormalizedName = "admin"
                         });
@@ -210,14 +210,14 @@ namespace WebApplication.WebApi.Migrations
                         {
                             Id = new Guid("0027068e-4c5d-4ecb-a157-b9cc063cd672"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "01bd89ee-55c4-4af2-97ac-053c9ebedbc2",
+                            ConcurrencyStamp = "f0304ccb-f14c-46dd-b712-8d4db19330fe",
                             Email = "huynabhaf190133@fpt.edu.vn",
                             EmailConfirmed = true,
                             FullName = "Nguyen Anh Huy",
                             LockoutEnabled = false,
                             NormalizedEmail = "huynabhaf190133@fpt.edu.vn",
                             NormalizedUserName = "admin",
-                            PasswordHash = "AQAAAAEAACcQAAAAEE4YnW+XXxuWHM3+Z+2Bcx1eQ1EPeSNMiXb3vI6reRjeEUkZO8KUuRhFvm2sQ/a0Dw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEFG7Mm2cXNV3nPaGTKQQuOGG72l2A+4LMtMy2XQIspKewZRWzK2xE9C7tdjhJFt4Jw==",
                             PhoneNumber = "0399056507",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
@@ -236,9 +236,6 @@ namespace WebApplication.WebApi.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("CreatorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("DeletorId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
@@ -270,9 +267,6 @@ namespace WebApplication.WebApi.Migrations
                     b.Property<Guid?>("CreatorId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("DeletorId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -300,9 +294,6 @@ namespace WebApplication.WebApi.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("CreatorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("DeletorId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
@@ -345,14 +336,8 @@ namespace WebApplication.WebApi.Migrations
                     b.Property<Guid>("CreatorId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("DeletorId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("UpdateTime")
                         .HasColumnType("datetime2");
-
-                    b.Property<Guid>("UpdaterId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("CategoryId", "CourseId");
 
@@ -374,9 +359,6 @@ namespace WebApplication.WebApi.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("CreatorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("DeletorId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
@@ -415,9 +397,6 @@ namespace WebApplication.WebApi.Migrations
                     b.Property<Guid>("CreatorId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("DeletorId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("UpdateTime")
                         .HasColumnType("datetime2");
 
@@ -443,9 +422,6 @@ namespace WebApplication.WebApi.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("CreatorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("DeletorId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("UpdateTime")

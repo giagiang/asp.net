@@ -5,6 +5,7 @@ namespace WebApplication.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class BaseController : ControllerBase
     {
     }
