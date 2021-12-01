@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 using WebApplication.WebApi.Services;
@@ -17,6 +18,7 @@ namespace WebApplication.WebApi.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> GetListAsync([FromQuery] PagedAndSortedResultRequestDto requestDto)
         {
             return Ok(await _classService.GetListAsync(requestDto));
