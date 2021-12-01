@@ -1,15 +1,9 @@
-﻿@model WebApplication.WebApi.ViewModels.Users.CreateUserDto;
-@{
-    ViewData["Title"] = "Register";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+﻿@{
+    Layout = null;
 }
-
-<ul class="breadcrumb">
-    <li><a href="index.html">Home</a> <span class="divider">/</span></li>
-    <li class="active">Registration</li>
-</ul>
-<h3> Registration</h3>
-
+<head>
+    <link rel="stylesheet" href="~/css/login.css">
+</head>
 
 <div class="wrapper fadeInDown">
     <div id="formContent">
@@ -29,6 +23,7 @@
             <input type="text" id="email" class="fadeIn third" name="email" placeholder="email" value="dat@gmail.com">
             <input type="submit" class="fadeIn fourth" value="Sign Up" id="signUp">
 
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
             <script>
                 $("#signUp").click(() => {
