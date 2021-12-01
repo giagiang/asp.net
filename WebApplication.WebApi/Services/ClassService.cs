@@ -42,7 +42,7 @@ namespace WebApplication.WebApi.Services
             _userManager = userManager;
             _mapper = mapper;
             _managementDbContext = managementDbContext;
-            UserId = new Guid(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            UserId = httpContextAccessor.HttpContext.User.Identity.IsAuthenticated ? new Guid(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value) : Guid.Empty;
         }
 
         public async Task<ClassVm> CreateAsync(CreateClassDto dto)
