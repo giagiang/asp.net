@@ -60,7 +60,10 @@ namespace WebApplication.WebApi.Services
         public async Task<TopicVm> CreateAsync(TopicCreateDto dto)
         {
             var t = _mapper.Map<TopicCreateDto, Topic>(dto);
-            t.Image = await SaveFile(dto.Image);
+            if (t.Image != null)
+            {
+                t.Image = await SaveFile(dto.Image);
+            }
             t.CreateTime = DateTime.Now;
             t.CreatorId = UserId;
             var topic = await _managementDbContext.Topics.AddAsync(t);
@@ -100,20 +103,21 @@ namespace WebApplication.WebApi.Services
                             UpdaterId = t.UpdaterId,
                             Image = t.Image
                         };
+            var totalItems = query.Count();
             if (!string.IsNullOrWhiteSpace(request.Filter))
             {
-                query = query.Where(x => x.Name.Contains(request.Filter) || x.Courses.Name.Contains(request.Filter));
+                query = query.Where(x => x.Name.Contains(request.Filter)||x.Description.Contains(request.Filter));
             }
             if (string.IsNullOrEmpty(request.Sorting)) request.Sorting = nameof(Topic.Name);
             var tm = await query.OrderBy(x => x.Id).Skip((request.SkipCount - 1) * request.MaxResultCount).Take(request.MaxResultCount).ToListAsync();
             var topic = _mapper.Map<List<TopicVm>>(tm); ;
-            return new PagedResultDto<TopicVm> { Items = topic, totalCount = tm.Count };
+            return new PagedResultDto<TopicVm> { Items = topic, totalCount = totalItems };
         }
 
         public async Task<TopicVm> UpdateAsync(TopicUpdateDto dto)
         {
             var topic = await _managementDbContext.Topics.FindAsync(dto.Id);
-            if (topic != null) return null;
+            if (topic == null) return null;
             topic.Name = dto.Name;
             topic.UpdateTime = DateTime.Now;
             topic.Description = dto.Description;

@@ -8,40 +8,196 @@
 }
 @section Scripts{
     <script>
-        let html = "";
-        $.ajax({
-            url: "https://localhost:5001/api/Topics",
-            type: "GET",
-            success: datas => {
-                for (var data of datas.items) {
-                    const updateTime = data.updateTime == null ? "No Time Update" : moment(data.updateTime).format("DD/MM/YYY")
-                    html += `<tr>
-                                     <th scope="row">`+ data.name + `</th>
-                                     <td>`+ data.description + `</td>
-                                     <td>`+ moment(data.createTime).format("DD/MM/YYY") + `</td>
-                                     <td>`+ updateTime + `</td>
-                                     <td><img class='image-topic' src=https://localhost:5001/store-image/`+ data.image + ` /></td>
-                                     <td class='action-center' scope="col">
-                                          <a class="btn btn-success">Update</a>
-                                           <a class="btn btn-danger">Delete</a>
-                                      </td>
-                                     </tr>`;
+        let currentPage = 1;
+        function getAllTopic(filter, page) {
+            let html = "";
+            currentPage = page;
+            $.ajax({
+                url: `https://localhost:5001/api/Topics?SkipCount=${currentPage}&Filter=${filter}`,
+                type: "GET",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Authorization", "Bearer " + user.accessToken);
+                },
+                success: datas => {
+                    console.log(datas.totalCount)
+                    renderPagination(datas.totalCount, page);
+                    for (var data of datas.items) {
+                        const updateTime = data.updateTime == null ? "No Time Update" : moment(data.updateTime).format("DD/MM/YYY");
+                        html += `<tr>
+                                         <th scope="row">`+ data.name + `</th>
+                                         <td>`+ data.description + `</td>
+                                         <td>`+ moment(data.createTime).format("DD/MM/YYY") + `</td>
+                                         <td>`+ updateTime + `</td>
+                                         <td><img class='image-topic' src=https://localhost:5001/store-image/`+ data.image + ` /></td>
+                                         <td class='action-center' scope="col">
+                                         <a class="btn btn-success" onclick='showModalUpdate(${JSON.stringify(data)})'>Update</a>
+                                         <a class="btn btn-danger" onclick='deleteTopic(${JSON.stringify(data.id)})'>Delete</a>
+                                         </td>
+                                       </tr>`;
+                    }
+                    $("#body-topic").html(html);
+                    $("#tabletopic").show();
+                    $("#spinLoaded").hide();
                 }
-                $("#body-topic").html(html);
-                $("#tabletopic").show();
-                $("#spinLoaded").hide();
+            })
+        }
+        getAllTopic('', currentPage);
+        console.log(user.accessToken)
+        function getListCourse(flag) {
+            if (flag == true) {
+                $("#update").hide();
+                $("#create").show();
+                $("#modallabelTopic").text("Add topic");
             }
-        })
+            $.ajax({
+                url: "https://localhost:5001/api/Courses/all?MaxResultCount=100",
+                type: "GET",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Authorization", "Bearer " + user.accessToken);
+                },
+                success: response => {
+                    console.log(response);
+                    let html = "<option selected></option>";
+                    for (let i of response.items) {
+                        html += `<option value='` + i.id + `'>` + i.name + `</option>`
+                    }
+                    $("#inputState").html(html)
+                }
+            })
+        }
+        function addNewTopic() {
+            var formData = new FormData();
+            formData.append('name', $("#name").val());
+            formData.append('description', $("#description").val());
+            formData.append('image', $("#image")[0].files[0]);
+            formData.append('courseId', $("#inputState").val());
+            $("#image-cd").show();
+            $.ajax({
+                url: `https://localhost:5001/api/Topics`,
+                type: "POST",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Authorization", "Bearer " + user.accessToken);
+                },
+                data: formData,
+                success: response => {
+                    $("#createModal").modal("hide");
+                    swal({
+                        title: "Create Success",
+                        text: "Hihi!",
+                        icon: "success",
+                        type: "OK"
+                    })
+                    getAllTopic('', currentPage);
+                    $("#name").val();
+                    $("#description").val();
+                    $("#inputState").val();
+                    $("#image")[0].files[0];
+                },
+                cache: false,
+                contentType: false,
+                processData: false
+            })
+        }
+        let currentValueUpdate;
+
+        function showModalUpdate(data) {
+            $("#create").hide();
+            $("#update").show();
+            getListCourse(false);
+            console.log("vo");
+            $("#modallabelTopic").text("Update topic");
+            $("#createModal").modal("show");
+            $("#name").val(data.name);
+            $("#description").val(data.description);
+            $("#image-cd").hide();
+            currentValueUpdate = data;
+        }
+        function updateTopic(data) {
+            const newdata = {
+                "id": data.id,
+                "name": $("#name").val(),
+                "description": $("#description").val(),
+                "courseId": $("#inputState").val()
+            }
+            console.log(newdata);
+            $.ajax({
+                contentType: 'application/json; charset=UTF-8',
+                url: `https://localhost:5001/api/Topics`,
+                type: "PUT",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Authorization", "Bearer " + user.accessToken);
+                },
+                dataType: "json",
+                data: JSON.stringify(newdata),
+                success: response => {
+                    $("#createModal").modal("hide");
+                    swal({
+                        title: "Update Success",
+                        text: "Hihi!",
+                        icon: "success",
+                        type: "OK"
+                    })
+                    getAllTopic('', currentPage);
+                    $("#name").val();
+                    $("#description").val();
+                    $("#inputState").val();
+                },
+                cache: false,
+                processData: false
+            })
+        }
+        function deleteTopic(id) {
+            currentIdelete = id;
+            $("#deleteModal").modal("show");
+        }
+        function confirmDelete() {
+            $.ajax({
+                url: "https://localhost:5001/api/Topics/" + currentIdelete,
+                type: "DELETE",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Authorization", "Bearer " + user.accessToken);
+                },
+                success: response => {
+                    swal({
+                        title: "Delete Success",
+                        text: "Hihi!",
+                        icon: "success",
+                        type: "OK"
+                    })
+                    $("#deleteModal").modal("hide");
+                    getAllTopic('', currentPage);
+                }
+            })
+        }
+        let currentIdelete;
+        function renderPagination(totalElement, nextPage) {
+            $('#paginationTopic').empty();
+            $('#paginationTopic').append(
+                `<li class="page-item ${nextPage == 1 ? 'disabled' : ''}" ${nextPage == 1 ? '' : `onclick="getAllTopic('', ${nextPage - 1})"`}><a class="page-link">Back</a></li>`
+            );
+            let totalPage = totalElement > 0 ? Math.ceil(totalElement / 10) : 1;
+            let lastPage = totalPage - nextPage == 0 ? nextPage : (nextPage + 1);
+            let firstPage = nextPage == 1 ? nextPage : nextPage - 1;
+            console.log(lastPage, firstPage, nextPage, totalElement);
+            for (let i = firstPage; i <= lastPage; i++) {
+                $('#paginationTopic').append(
+                    `<li class="page-item ${i == nextPage ? 'active' : ''}" ${i == nextPage ? '' : `onclick="getAllTopic('', ${i})`}"><a class="page-link">${i}</a></li>`
+                );
+            }
+            $('#paginationTopic').append(
+                `<li class="page-item ${nextPage == lastPage ? 'disabled' : ''}" ${nextPage == lastPage ? '' : `onclick="getAllTopic('', ${nextPage + 1})"`}><a class="page-link" href="#">Next</a></li>`
+            );
+        }
     </script>
 }
-<h2>Create</h2>
+<h2 onclick="getListCourse(true)" data-toggle="modal" data-target="#createModal">Create</h2>
 <div class="justify-content-center" style="display:flex" id="spinLoaded">
     <div class="spinner-border text-success " role="status">
         <span class="sr-only">Loading...</span>
     </div>
 </div>
 <table id="tabletopic" style="display:none" class="table table-striped table-hover">
-    <thead style=" background: rebeccapurple;" >
+    <thead style=" background: rebeccapurple;">
         <tr>
             <th scope="col">Topic Name</th>
             <th scope="col">Topic Description</th>
@@ -54,3 +210,68 @@
     <tbody id="body-topic">
     </tbody>
 </table>
+<nav aria-label="Page navigation example">
+    <ul class="pagination" id="paginationTopic">
+    </ul>
+</nav>
+<!-- Logout Modal-->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Do you want delete it ??</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h2>Alert!!!!</h2>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <button class="btn btn-danger" id="update" onclick="confirmDelete()" type="button">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Logout Modal-->
+<div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modallabelTopic">New Topic</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addNewTopic" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="name">Topic Name</label>
+                        <input type="text" class="form-control" id="name" aria-describedby="emailHelp" placeholder="Enter email">
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Topic Description</label>
+                        <input type="text" class="form-control" id="description" placeholder="Password">
+                    </div>
+                    <div class="form-group" id="image-cd">
+                        <label for="image">Topic Image</label>
+                        <input type="file" class="form-control-file" id="image">
+                    </div>
+                    <div class="form-group">
+                        <label for="inputState">Course</label>
+                        <select id="inputState" class="form-control form-control-sm"></select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <button class="btn btn-primary" id="create" onclick="addNewTopic()" type="button">Create</button>
+                <button class="btn btn-primary" id="update" onclick="updateTopic(currentValueUpdate)" type="button">Update</button>
+            </div>
+        </div>
+    </div>
+</div>

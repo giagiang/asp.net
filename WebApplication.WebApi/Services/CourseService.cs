@@ -99,6 +99,7 @@ namespace WebApplication.WebApi.Services
         public async Task<PagedResultDto<CourseVm>> GetListAsync(PagedAndSortedResultRequestDto request)
         {
             var query = _managementDbContext.Courses.Include(x => x.UserCourses).ThenInclude(x => x.AppUser);
+            var totalItems = query.Count();
             if (!string.IsNullOrWhiteSpace(request.Filter))
             {
                 query.Where(x => x.Name.Contains(request.Filter));
@@ -120,7 +121,7 @@ namespace WebApplication.WebApi.Services
             return new PagedResultDto<CourseVm>
             {
                 Items = data,
-                totalCount = query.Count()
+                totalCount = totalItems
             };
         }
 

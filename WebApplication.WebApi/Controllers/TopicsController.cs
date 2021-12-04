@@ -31,9 +31,9 @@ namespace WebApplication.WebApi.Controllers
         }
 
         [HttpDelete("{Id}")]
-        public async Task<IActionResult> DeleteAsync(Guid id)
+        public async Task<IActionResult> DeleteAsync(Guid Id)
         {
-            return Ok(await _topicService.DeleteAsync(id));
+            return Ok(await _topicService.DeleteAsync(Id));
         }
 
         [HttpGet("{Id}")]
@@ -46,6 +46,12 @@ namespace WebApplication.WebApi.Controllers
         public async Task<IActionResult> GetAllListAsync([FromQuery] PagedAndSortedResultRequestDto requestDto)
         {
             return Ok(await _topicService.GetAllListAsync(requestDto));
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateAsync([FromBody] TopicUpdateDto dto)
+        {
+            return Ok(await _topicService.UpdateAsync(dto));
         }
     }
 }
