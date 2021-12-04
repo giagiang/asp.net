@@ -1,0 +1,77 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Users";
+    Layout = "~/Views/Shared/_Layout_admin.cshtml";
+    ViewData["head-title"] = "Management User";
+}
+@section Scripts{
+    <script>
+        let curruntUserPage = 1;
+        function getAllUser(filter, page) {
+            curruntUserPage = page;
+            $.ajax({
+                url: "https://localhost:5001/api/Users?SkipCount=" + page + "&MaxResultCount=10&Filter=n",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Authorization", "Bearer " + user.accessToken);
+                },
+                type: "GET",
+                success: response => {
+                    renderPagination(response.totalCount, page);
+                    let html = "";
+                    for (let data of response.items) {
+                        console.log(data)
+                        html += `<tr>
+                                                           <th scope="row">`+ data.userName + `</th>
+                                                           <td>`+ data.fullName + `</td>
+                                                           <td>`+ data.email + `</td>
+                                                           <td>`+ data.phoneNumber + `</td>
+                                                            <td class='action-center' scope="col">
+                                                            <div class="btn-group">
+                                                                <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                                    Action
+                                                                </button>
+                                                                <div class="dropdown-menu">
+                                                                    <a class="dropdown-item" onclick='showModalUpdate(${JSON.stringify(data)})'>Update</a>
+                                                                    <a class="dropdown-item" onclick='deleteTopic(${JSON.stringify(data.id)})'>Delete</a>
+                                                                    <div class="dropdown-divider"></div>
+                                                                    <a class="dropdown-item" href="#">Separated link</a>
+                                                                </div>
+                                                            </div>
+                                                           </td>
+                                                           </tr>`;
+                    }
+                    $("#body-user").html(html);
+                    $("#spinLoaded").hide();
+                    $("#tableuser").removeClass("d-none");
+                }
+            })
+        }
+        getAllUser('', curruntUserPage);
+    </script>
+}
+<h2 onclick="getListCourse(true)" data-toggle="modal" data-target="#createModal">Create</h2>
+<div class="justify-content-center" style="display:flex" id="spinLoaded">
+    <div class="spinner-border text-success " role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+<table id="tableuser" class="d-none table table-striped table-hover">
+    <thead style=" background: rebeccapurple;">
+        <tr>
+            <th scope="col">User Name</th>
+            <th scope="col">Full Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Phone</th>
+            <th scope="col" class="text-center">Action</th>
+        </tr>
+    </thead>
+    <tbody id="body-user">
+    </tbody>
+</table>
+<nav aria-label="Page navigation example">
+    <ul class="pagination" id="paginationTopic">
+    </ul>
+</nav>
+

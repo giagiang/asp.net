@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WebApplication.WebApi.Data.DbContext;
 using WebApplication.WebApi.Data.Entity;
+using WebApplication.WebApi.ViewModels.Classes;
 using WebApplication.WebApi.ViewModels.Common;
 using WebApplication.WebApi.ViewModels.Courses;
 using WebApplication.WebApi.ViewModels.Users;
@@ -116,16 +117,30 @@ namespace WebApplication.WebApi.Services
 
         public async Task<PagedResultDto<UserVm>> GetListAsync(PagedAndSortedResultRequestDto request)
         {
-            var query = _userManager.Users;
+            var query = _userManager.Users.Include(x => x.UserClasses).ThenInclude(x => x.Class).
+                Include(x => x.UserCourses)
+                .ThenInclude(x => x.Course)
+                ;
             if (!string.IsNullOrWhiteSpace(request.Filter))
             {
-                query = query.Where(x => x.UserName.Contains(request.Filter) || x.Email.Contains(request.Filter));
+                query.Where(x => x.UserName.Contains(request.Filter) || x.Email.Contains(request.Filter));
             }
             if (string.IsNullOrEmpty(request.Sorting)) request.Sorting = nameof(AppUser.UserName);
             if (request.SkipCount == 0) request.SkipCount = 1;
             if (request.MaxResultCount == 0) request.MaxResultCount = 10;
-            var t = await query.OrderBy(x => x.Id).Skip((request.SkipCount - 1) * request.MaxResultCount).Take(request.MaxResultCount).ToListAsync();
-            var user = _mapper.Map<List<UserVm>>(t); ;
+            var t = await query.OrderBy(x => x.Id).Skip((request.SkipCount - 1) * request.MaxResultCount).
+                Take(request.MaxResultCount).ToListAsync();
+
+            var user = t.Select(x => new UserVm()
+            {
+                Class = _mapper.Map<List<ClassVm>>(x.UserClasses.Select(x => x.Class)),
+                FullName = x.FullName,
+                Course = _mapper.Map<List<CourseVm>>(x.UserCourses.Select(x => x.Course)),
+                Email = x.Email,
+                Id = x.Id,
+                PhoneNumber = x.PhoneNumber,
+                UserName = x.UserName
+            }).ToList();
             return new PagedResultDto<UserVm> { Items = user, totalCount = t.Count };
         }
 

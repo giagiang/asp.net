@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using WebApplication.WebApi.ViewModels.Users;
 
 namespace WebApplication.WebApi.ViewModels.Classes
@@ -13,6 +14,6 @@ namespace WebApplication.WebApi.ViewModels.Classes
         public DateTime? UpdateTime { set; get; }
         public Guid? UpdaterId { set; get; }
         public Guid? DeletorId { set; get; }
-        public UserVm User { set; get; }
+        public List<UserVm> User { set; get; }
     }
 }

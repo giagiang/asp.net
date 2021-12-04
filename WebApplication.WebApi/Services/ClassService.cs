@@ -74,17 +74,17 @@ namespace WebApplication.WebApi.Services
         public async Task<PagedResultDto<ClassVm>> GetListAsync(PagedAndSortedResultRequestDto request)
         {
             var query = _managementDbContext.Classes.Include(x => x.UserClasses).ThenInclude(x => x.AppUser);
-            var totalC = query.Count();
             if (!string.IsNullOrWhiteSpace(request.Filter))
             {
                 query.Where(x => x.Name.Contains(request.Filter));
             }
+            var totalC = query.Count();
             if (string.IsNullOrEmpty(request.Sorting)) request.Sorting = nameof(Topic.Name);
             var tm = await query.OrderBy(x => x.Id).Skip((request.SkipCount - 1) * request.MaxResultCount).Take(request.MaxResultCount)
                 .ToListAsync();
             var data = tm.Select(x => new ClassVm()
             {
-                User = _mapper.Map<UserVm>(x.UserClasses.Select(x => x.AppUser)),
+                User = _mapper.Map<List<UserVm>>(x.UserClasses.Select(x => x.AppUser)),
                 Name = x.Name,
                 Description = x.Description,
                 Id = x.Id,
@@ -120,7 +120,7 @@ namespace WebApplication.WebApi.Services
                         select new { c, uc, u };
             var data = await query.Select(x => new ClassVm()
             {
-                User = _mapper.Map<UserVm>(x.uc.AppUser),
+                User = _mapper.Map<List<UserVm>>(x.uc.AppUser),
                 Name = x.c.Name,
                 Description = x.c.Description,
                 Id = x.c.Id,
@@ -130,7 +130,7 @@ namespace WebApplication.WebApi.Services
 
         public async Task<PagedResultDto<ClassVm>> GetAllListAsync(PagedAndSortedResultRequestDto request)
         {
-            var query = _managementDbContext.Classes;
+            var query = _managementDbContext.Classes.Include(x => x.UserClasses).ThenInclude(x => x.AppUser);
             if (!string.IsNullOrWhiteSpace(request.Filter))
             {
                 query.Where(x => x.Name.Contains(request.Filter));

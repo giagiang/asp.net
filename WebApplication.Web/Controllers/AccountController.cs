@@ -27,6 +27,11 @@ namespace WebApplication.Web.Controllers
             _userApiClient = userApiClient;
             _configuration = configuration;
         }
+        [HttpGet]
+        public ActionResult Index()
+        {
+            return View();
+        }
 
         [HttpGet]
         public IActionResult Login()

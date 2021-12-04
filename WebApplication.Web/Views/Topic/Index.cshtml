@@ -170,24 +170,7 @@
             })
         }
         let currentIdelete;
-        function renderPagination(totalElement, nextPage) {
-            $('#paginationTopic').empty();
-            $('#paginationTopic').append(
-                `<li class="page-item ${nextPage == 1 ? 'disabled' : ''}" ${nextPage == 1 ? '' : `onclick="getAllTopic('', ${nextPage - 1})"`}><a class="page-link">Back</a></li>`
-            );
-            let totalPage = totalElement > 0 ? Math.ceil(totalElement / 10) : 1;
-            let lastPage = totalPage - nextPage == 0 ? nextPage : (nextPage + 1);
-            let firstPage = nextPage == 1 ? nextPage : nextPage - 1;
-            console.log(lastPage, firstPage, nextPage, totalElement);
-            for (let i = firstPage; i <= lastPage; i++) {
-                $('#paginationTopic').append(
-                    `<li class="page-item ${i == nextPage ? 'active' : ''}" ${i == nextPage ? '' : `onclick="getAllTopic('', ${i})`}"><a class="page-link">${i}</a></li>`
-                );
-            }
-            $('#paginationTopic').append(
-                `<li class="page-item ${nextPage == lastPage ? 'disabled' : ''}" ${nextPage == lastPage ? '' : `onclick="getAllTopic('', ${nextPage + 1})"`}><a class="page-link" href="#">Next</a></li>`
-            );
-        }
+       
     </script>
 }
 <h2 onclick="getListCourse(true)" data-toggle="modal" data-target="#createModal">Create</h2>
