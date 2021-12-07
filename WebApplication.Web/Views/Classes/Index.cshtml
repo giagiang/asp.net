@@ -1,0 +1,132 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Classes";
+    Layout = "~/Views/Shared/_Layout_admin.cshtml";
+    ViewData["head-title"] = "Class Control";
+}
+@section Scripts{
+    <script>
+        let currentPage = 1;
+        function getAllClass(filter, page) {
+            let html = "";
+            currentPage = page;
+            $.ajax({
+                url: `https://localhost:5001/api/Classes?SkipCount=1&MaxResultCount=10&Filter=t`,
+                type: "GET",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Authorization", "Bearer " + user.accessToken);
+                },
+                success: datas => {
+                    console.log(datas.totalCount)
+                    renderPagination(datas.totalCount, page);
+                    for (var data of datas.items) {
+                        const updateTime = data.updateTime == null ? "No Time Update" : moment(data.updateTime).format("DD/MM/YYY");
+                        html += `<tr>
+                                                                     <th scope="row">`+ data.name + `</th>
+                                                                     <td>`+ data.description + `</td>
+                                                                     <td>`+ moment(data.createTime).format("DD/MM/YYY") + `</td>
+                                                                     <td>`+ updateTime + `</td>
+                                                                     <td class='action-center' scope="col">
+                                                                        <div class="btn-group">
+                                                                            <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                                                Action
+                                                                            </button>
+                                                                            <div class="dropdown-menu">
+                                                                                <a class="dropdown-item" onclick='detailClass(${JSON.stringify(data)})'>Detail</a>
+                                                                                <a class="dropdown-item" onclick='showModalUpdate(${JSON.stringify(data)})'>Update</a>
+                                                                                <a class="dropdown-item" onclick='deleteClass(${JSON.stringify(data.id)})'>Delete</a>
+                                                                                <div class="dropdown-divider"></div>
+                                                                                <a class="dropdown-item" href="#">Separated link</a>
+                                                                            </div>
+                                                                        </div>
+                                                                       </td>
+                                                                       </tr>`;
+                    }
+                    $("#body-class").html(html);
+                    $("#tableclass").removeClass("d-none");
+                    $("#spinLoaded").hide();
+                }
+            })
+        }
+        getAllClass('', currentPage);
+
+        //Delete
+
+        function deleteClass(id) {
+            currentIdelete = id;
+            $("#deleteModal").modal("show");
+        }
+        function confirmDelete() {
+            $.ajax({
+                url: "https://localhost:5001/api/Classes/" + currentIdelete,
+                type: "DELETE",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Authorization", "Bearer " + user.accessToken);
+                },
+                success: response => {
+                    swal({
+                        title: "Delete Success",
+                        text: "Hihi!",
+                        icon: "success",
+                        type: "OK"
+                    })
+                    $("#deleteModal").modal("hide");
+                    getAllClass('', currentPage);
+                }
+            })
+        }
+        let currentIdelete;
+
+       
+    </script>
+}
+
+<h2 onclick="getListClass(true)" data-toggle="modal" data-target="#createModal">Create</h2>
+<div class="justify-content-center" style="display:flex" id="spinLoaded">
+    <div class="spinner-border text-success " role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+<table id="tableclass" class="d-none table table-striped table-hover">
+    <thead style=" background: rebeccapurple;">
+        <tr>
+            <th scope="col">Class Name</th>
+            <th scope="col">Class Description</th>
+            <th scope="col">Create Time</th>
+            <th scope="col">Update Time</th>
+            <th scope="col" class="text-center">Action</th>
+        </tr>
+    </thead>
+    <tbody id="body-class">
+    </tbody>
+</table>
+<nav aria-label="Page navigation example">
+    <ul class="pagination" id="paginationTopic">
+    </ul>
+</nav>
+
+<!-- Delete -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Do you want delete it ??</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h2>Alert!!!!</h2>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <button class="btn btn-danger" id="update" onclick="confirmDelete()" type="button">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
