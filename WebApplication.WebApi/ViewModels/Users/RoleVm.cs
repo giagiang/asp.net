@@ -9,5 +9,6 @@ namespace WebApplication.WebApi.ViewModels.Users
     {
         public Guid Id { set; get; }
         public string Name { set; get; }
+        public List<UserVm> Users { set; get; }
     }
 }

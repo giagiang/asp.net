@@ -33,7 +33,7 @@ namespace WebApplication.WebApi.Services
 
         Task<ApiResult<bool>> RoleAssign(Guid id, RoleAssignRequest request);
 
-        Task<ApiResult<UserVm>> GetById(Guid id);
+        Task<ApiResult<UserGetId>> GetById(Guid id);
 
         Task<bool> PermissionUser(Guid Id, string claimValue);
 
@@ -55,8 +55,9 @@ namespace WebApplication.WebApi.Services
         private readonly IMapper _mapper;
         private readonly ManagementDbContext _managementDbContext;
 
-        public UserService(IConfiguration configuration, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMapper mapper, ManagementDbContext managementDbContext)
+        public UserService(RoleManager<AppRole> roleManager, IConfiguration configuration, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMapper mapper, ManagementDbContext managementDbContext)
         {
+            _roleManager = roleManager;
             _managementDbContext = managementDbContext;
             _mapper = mapper;
             _signInManager = signInManager;
@@ -119,8 +120,8 @@ namespace WebApplication.WebApi.Services
         {
             var query = _userManager.Users.Include(x => x.UserClasses).ThenInclude(x => x.Class).
                 Include(x => x.UserCourses)
-                .ThenInclude(x => x.Course)
-                ;
+                .ThenInclude(x => x.Course).Include(x => x.AppUserRoles).ThenInclude(x => x.AppRole);
+
             if (!string.IsNullOrWhiteSpace(request.Filter))
             {
                 query.Where(x => x.UserName.Contains(request.Filter) || x.Email.Contains(request.Filter));
@@ -139,7 +140,8 @@ namespace WebApplication.WebApi.Services
                 Email = x.Email,
                 Id = x.Id,
                 PhoneNumber = x.PhoneNumber,
-                UserName = x.UserName
+                UserName = x.UserName,
+                Roles = _mapper.Map<List<RoleVm>>(x.AppUserRoles.Select(x => x.AppRole))
             }).ToList();
             return new PagedResultDto<UserVm> { Items = user, totalCount = t.Count };
         }
@@ -194,15 +196,15 @@ namespace WebApplication.WebApi.Services
             return new ApiSuccessResult<bool>();
         }
 
-        public async Task<ApiResult<UserVm>> GetById(Guid id)
+        public async Task<ApiResult<UserGetId>> GetById(Guid id)
         {
             var user = await _userManager.FindByIdAsync(id.ToString());
             if (user == null)
             {
-                return new ApiErrorResult<UserVm>("User không tồn tại");
+                return new ApiErrorResult<UserGetId>("User không tồn tại");
             }
             var roles = await _userManager.GetRolesAsync(user);
-            var userVm = new UserVm()
+            var userVm = new UserGetId()
             {
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
@@ -210,12 +212,19 @@ namespace WebApplication.WebApi.Services
                 UserName = user.UserName,
                 Roles = roles
             };
-            return new ApiSuccessResult<UserVm>(userVm);
+            return new ApiSuccessResult<UserGetId>(userVm);
         }
 
         public async Task<List<RoleVm>> GetListRole()
         {
-            return _mapper.Map<List<RoleVm>>(await _roleManager.Roles.ToListAsync());
+            var query = await _roleManager.Roles.Include(x => x.AppUserRoles).ThenInclude(x => x.AppUser).ToListAsync();
+            var result = query.Select(x =>new RoleVm
+            {
+                Users=_mapper.Map<List<UserVm>>(x.AppUserRoles.Select(x=>x.AppUser)),
+                Id=x.Id,
+                Name=x.Name
+            }).ToList();
+            return result;
         }
 
         public async Task<ApiResult<bool>> CourseAssign(CourseAssignRequest request)
@@ -245,6 +254,9 @@ namespace WebApplication.WebApi.Services
             var @class = await _managementDbContext.Classes.FindAsync(request.ClassId);
             if (user != null && @class != null)
             {
+                var userClasscheck = await _managementDbContext.UserClasses.
+                    FirstOrDefaultAsync(x => x.ClassId.Equals(@class.Id) && x.UserId.Equals(user.Id));
+                if (userClasscheck != null) return new ApiErrorResult<bool>("Try with another diffirence class");
                 var userClass = new UserClass()
                 {
                     AppUser = user,

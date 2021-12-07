@@ -11,5 +11,6 @@ namespace WebApplication.WebApi.Data.Entity
         public string FullName { set; get; }
         public List<UserCourse> UserCourses { set; get; }
         public List<UserClass> UserClasses { set; get; }
+        public List<AppUserRole> AppUserRoles { set; get; }
     }
 }

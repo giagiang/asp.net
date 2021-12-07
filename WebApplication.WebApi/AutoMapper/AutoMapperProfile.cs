@@ -15,6 +15,7 @@ namespace WebApplication.WebApi.AutoMapper
             CreateMap<AppUser, UserCourseVm>().ReverseMap();
             CreateMap<AppUser, CreateUserDto>().ReverseMap();
             CreateMap<AppUser, UpdateUserDto>().ReverseMap();
+            CreateMap<AppRole, RoleVm>().ReverseMap();
             CreateMap<Topic, TopicVm>().ReverseMap();
             CreateMap<Topic, TopicCreateDto>().ReverseMap();
             CreateMap<Topic, TopicUpdateDto>().ReverseMap();

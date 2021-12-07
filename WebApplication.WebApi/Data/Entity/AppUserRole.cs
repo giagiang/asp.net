@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace WebApplication.WebApi.Data.Entity
 {
-    public class AppRole : IdentityRole<Guid>
+    public class AppUserRole : IdentityUserRole<Guid>
     {
-        public List<AppUserRole> AppUserRoles { set; get; }
+        public AppUser AppUser { set; get; }
+        public AppRole AppRole { set; get; }
     }
 }

@@ -9,9 +9,5 @@ namespace WebApplication.WebApi.ViewModels.Common
 
         public bool Selected { get; set; }
 
-        public object Select()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

@@ -21,30 +21,174 @@
                     renderPagination(response.totalCount, page);
                     let html = "";
                     for (let data of response.items) {
-                        console.log(data)
                         html += `<tr>
-                                                           <th scope="row">`+ data.userName + `</th>
-                                                           <td>`+ data.fullName + `</td>
-                                                           <td>`+ data.email + `</td>
-                                                           <td>`+ data.phoneNumber + `</td>
-                                                            <td class='action-center' scope="col">
-                                                            <div class="btn-group">
-                                                                <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                                                    Action
-                                                                </button>
-                                                                <div class="dropdown-menu">
-                                                                    <a class="dropdown-item" onclick='showModalUpdate(${JSON.stringify(data)})'>Update</a>
-                                                                    <a class="dropdown-item" onclick='deleteTopic(${JSON.stringify(data.id)})'>Delete</a>
-                                                                    <div class="dropdown-divider"></div>
-                                                                    <a class="dropdown-item" href="#">Separated link</a>
-                                                                </div>
-                                                            </div>
-                                                           </td>
-                                                           </tr>`;
+                                                            <th scope="row">`+ data.userName + `</th>
+                                                                                           <td>`+ data.fullName + `</td>
+                                                                                           <td>`+ data.email + `</td>
+                                                                                           <td>`+ data.phoneNumber + `</td>
+                                                                                            <td class='action-center' scope="col">
+                                                                                            <div class="btn-group">
+                                                                                                <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                                                                    Action
+                                                                                                </button>
+                                                                                                <div class="dropdown-menu">
+                                                                                                    <a class="dropdown-item" onclick='showModalUpdate(${JSON.stringify(data)})'>Update</a>
+                                                                                                    <a class="dropdown-item" onclick='deleteTopic(${JSON.stringify(data.id)})'>Delete</a>
+                                                                                                    <a class="dropdown-item" onclick='roleAssignModal(${JSON.stringify(data.id)})'>Roles Assign</a>
+                                                                                                    <a class="dropdown-item" onclick='classAssign(${JSON.stringify(data.id)})' href="#">Class Assign</a>
+                                                                                                    <a class="dropdown-item" onclick=''>Course Assign</a>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                           </td>
+                                                                                           </tr>`;
+
                     }
                     $("#body-user").html(html);
                     $("#spinLoaded").hide();
                     $("#tableuser").removeClass("d-none");
+                }
+            })
+        }
+        let maxClass = 10;
+        let userClassAssignId;
+        function classAssign(id) {
+            userClassAssignId = id;
+            $("#classAssign").modal("show");
+            getListClass(maxClass);
+        }
+        function getMore() {
+            maxClass += 5;
+            getListClass(maxClass);
+        }
+        let roleAssignUserId;
+        function getListClass(max) {
+            maxClass = max;
+            $.ajax({
+                url: "https://localhost:5001/api/Classes?MaxResultCount=" + maxClass,
+                type: "GET",
+                success: datas => {
+                    let htm = "<option selected value='1'>Choice one Class</option>";
+                    for (let i of datas.items) {
+                        if (i.user.length > 0) {
+                            for (let j = 0; j < i.user.length; j++) {
+                                if (i.user[j].id == userClassAssignId) {
+                                    htm += `<option style="background:red" disabled value='` + i.id + `'>Class ->> ` + i.name + ` on this user did join </option>`;
+                                    break;
+                                }
+                                else {
+                                    if (j == i.user.length - 1) {
+                                        htm += `<option value='` + i.id + `'>Join Now -> ` + i.name + `</option>`;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        else {
+                            htm += `<option value='` + i.id + `'>Join Now -> ` + i.name + `</option>`;
+                        }
+
+                    }
+                    $("#selectClass").html(htm);
+                }
+            })
+        }
+        function assignUser() {
+            if (userClassAssignId != null && $("#selectClass").val() != 1) {
+                $.ajax({
+                    url: "https://localhost:5001/api/Users/ClassAssign",
+                    type: "POST",
+                    contentType: 'application/json; charset=UTF-8',
+                    data: JSON.stringify({ "userId": userClassAssignId, "classId": $("#selectClass").val() }),
+                    success: datas => {
+                        swal({
+                            title: "Assign Success",
+                            text: "Hihi!",
+                            icon: "success",
+                            type: "OK"
+                        });
+                        getListClass(maxClass);
+                    }
+                })
+            }
+            else {
+                swal({
+                    title: "Plss check again !!",
+                    text: "Hihi!",
+                    icon: "success",
+                    type: "OK"
+                })
+            }
+
+        }
+        function roleAssignModal(data) {
+            roleAssignUserId = data;
+            $("#roleAssign").modal("show");
+            $.ajax({
+                url: "https://localhost:5001/api/Users/GetListRole",
+                type: "GET",
+                success: datas => {
+                    let html = "";
+                    for (let i of datas) {
+                        if (i.users.length > 0) {
+                            for (let j = 0; j < i.users.length; j++) {
+                                if (i.users[j].id == roleAssignUserId) {
+                                    html += `<div class="form-check form-check-inline">
+                                      <input class="form-check-input" type="checkbox" id="rolebox${i.id}" value="${i.id}" checked>
+                                      <label class="form-check-label" for="inlineCheckbox1">${i.name}</label>
+                                    </div>`;
+                                    break;
+                                }
+                                else {
+                                    if (j == i.users.length - 1) {
+                                        html += `<div class="form-check form-check-inline">
+                                      <input class="form-check-input" type="checkbox" id="rolebox${i.id}" value="${i.id}">
+                                      <label class="form-check-label" for="inlineCheckbox1">${i.name}</label>
+                                    </div>`;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        else {
+                            html += `<div class="form-check form-check-inline">
+                                      <input class="form-check-input" type="checkbox" id="rolebox${i.id}" value="${i.id}">
+                                      <label class="form-check-label" for="inlineCheckbox1">${i.name}</label>
+                                    </div>`;
+                        }
+                    }
+                    $("#listrole").html(html);
+                }
+            })
+        }
+
+        function getListCourse(max) {
+            maxClass = max;
+            $.ajax({
+                url: "https://localhost:5001/api/Courses?MaxResultCount=" + maxClass,
+                type: "GET",
+                success: datas => {
+                    let htm = "<option selected value='1'>Choice one Course</option>";
+                    for (let i of datas.items) {
+                        if (i.user.length > 0) {
+                            for (let j = 0; j < i.user.length; j++) {
+                                if (i.user[j].id == userClassAssignId) {
+                                    htm += `<option style="background:red" disabled value='` + i.id + `'>Join Now ->> ` + i.name + ` (Did join) </option>`;
+                                    break;
+                                }
+                                else {
+                                    if (j == i.user.length - 1) {
+                                        htm += `<option value='` + i.id + `'>Join Now ->> ` + i.name + `</option>`;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        else {
+                            htm += `<option value='` + i.id + `'>Join Now ->> ` + i.name + `</option>`;
+                        }
+
+                    }
+                    $("#selectClass").html(htm);
                 }
             })
         }
@@ -75,3 +219,44 @@
     </ul>
 </nav>
 
+<div class="modal fade" id="classAssign" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modallabelTopic">Class Assign</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <select id="selectClass" class="form-control form-control-sm">
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <button class="btn btn-primary" id="classAssign" onclick="assignUser()" type="button">Assign</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="roleAssign" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modallabelTopic">Role Assign</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body" id="listrole">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <button class="btn btn-primary" id="classAssign" onclick="assignUser()" type="button">Assign</button>
+            </div>
+        </div>
+    </div>
+</div>
