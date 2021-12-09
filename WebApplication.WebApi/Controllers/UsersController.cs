@@ -70,17 +70,13 @@ namespace WebApplication.WebApi.Controllers
             return BadRequest(false);
         }
 
-        [HttpPut("{id}/roles")]
-        public async Task<IActionResult> RoleAssign(Guid id, [FromBody] RoleAssignRequest request)
+        [HttpPut("roles")]
+        public async Task<IActionResult> RoleAssign([FromBody] RoleAssignRequest request)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var result = await _userService.RoleAssign(id, request);
-            if (!result.IsSuccessed)
-            {
-                return BadRequest(result);
-            }
+            var result = await _userService.RoleAssign(request.Id, request);
             return Ok(result);
         }
 

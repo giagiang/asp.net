@@ -22,25 +22,25 @@
                     let html = "";
                     for (let data of response.items) {
                         html += `<tr>
-                                                            <th scope="row">`+ data.userName + `</th>
-                                                                                           <td>`+ data.fullName + `</td>
-                                                                                           <td>`+ data.email + `</td>
-                                                                                           <td>`+ data.phoneNumber + `</td>
-                                                                                            <td class='action-center' scope="col">
-                                                                                            <div class="btn-group">
-                                                                                                <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                                                                                    Action
-                                                                                                </button>
-                                                                                                <div class="dropdown-menu">
-                                                                                                    <a class="dropdown-item" onclick='showModalUpdate(${JSON.stringify(data)})'>Update</a>
-                                                                                                    <a class="dropdown-item" onclick='deleteTopic(${JSON.stringify(data.id)})'>Delete</a>
-                                                                                                    <a class="dropdown-item" onclick='roleAssignModal(${JSON.stringify(data.id)})'>Roles Assign</a>
-                                                                                                    <a class="dropdown-item" onclick='classAssign(${JSON.stringify(data.id)})' href="#">Class Assign</a>
-                                                                                                    <a class="dropdown-item" onclick=''>Course Assign</a>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                           </td>
-                                                                                           </tr>`;
+                                                                            <th scope="row">`+ data.userName + `</th>
+                                                                                                           <td>`+ data.fullName + `</td>
+                                                                                                           <td>`+ data.email + `</td>
+                                                                                                           <td>`+ data.phoneNumber + `</td>
+                                                                                                            <td class='action-center' scope="col">
+                                                                                                            <div class="btn-group">
+                                                                                                                <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                                                                                    Action
+                                                                                                                </button>
+                                                                                                                <div class="dropdown-menu">
+                                                                                                                    <a class="dropdown-item" onclick='showModalUpdate(${JSON.stringify(data)})'>Update</a>
+                                                                                                                    <a class="dropdown-item" onclick='deleteTopic(${JSON.stringify(data.id)})'>Delete</a>
+                                                                                                                    <a class="dropdown-item" onclick='roleAssignModal(${JSON.stringify(data.id)})'>Roles Assign</a>
+                                                                                                                    <a class="dropdown-item" onclick='classAssign(${JSON.stringify(data.id)})' href="#">Class Assign</a>
+                                                                                                                    <a class="dropdown-item" onclick=''>Course Assign</a>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                           </td>
+                                                                                                           </tr>`;
 
                     }
                     $("#body-user").html(html);
@@ -133,17 +133,17 @@
                             for (let j = 0; j < i.users.length; j++) {
                                 if (i.users[j].id == roleAssignUserId) {
                                     html += `<div class="form-check form-check-inline">
-                                      <input class="form-check-input" type="checkbox" id="rolebox${i.id}" value="${i.id}" checked>
-                                      <label class="form-check-label" for="inlineCheckbox1">${i.name}</label>
-                                    </div>`;
+                                                      <input class="form-check-input listRole-input" id="${i.name}" type="checkbox" value="${i.id}" checked>
+                                                      <label class="form-check-label" for="inlineCheckbox1">${i.name}</label>
+                                                    </div>`;
                                     break;
                                 }
                                 else {
                                     if (j == i.users.length - 1) {
                                         html += `<div class="form-check form-check-inline">
-                                      <input class="form-check-input" type="checkbox" id="rolebox${i.id}" value="${i.id}">
-                                      <label class="form-check-label" for="inlineCheckbox1">${i.name}</label>
-                                    </div>`;
+                                                      <input class="form-check-input listRole-input" id="${i.name}" type="checkbox" value="${i.id}">
+                                                      <label class="form-check-label" for="inlineCheckbox1">${i.name}</label>
+                                                    </div>`;
                                         break;
                                     }
                                 }
@@ -151,9 +151,9 @@
                         }
                         else {
                             html += `<div class="form-check form-check-inline">
-                                      <input class="form-check-input" type="checkbox" id="rolebox${i.id}" value="${i.id}">
-                                      <label class="form-check-label" for="inlineCheckbox1">${i.name}</label>
-                                    </div>`;
+                                                      <input class="form-check-input listRole-input" id="${i.name}" type="checkbox" value="${i.id}">
+                                                      <label class="form-check-label" for="inlineCheckbox1">${i.name}</label>
+                                                    </div>`;
                         }
                     }
                     $("#listrole").html(html);
@@ -193,6 +193,33 @@
             })
         }
         getAllUser('', curruntUserPage);
+        function AssignUserApi() {
+            const listRoleInput = $(".listRole-input");
+            let roles = { id: roleAssignUserId, Roles: [] };
+            for (var i = 0; i < listRoleInput.length; i++) {
+                roles.Roles.push({
+                    "id": listRoleInput.eq(i).attr("value"),
+                    "name": listRoleInput.eq(i).attr("id"),
+                    "selected": listRoleInput.eq(i).is(":checked")
+                })
+            }
+            if (roles.Roles != null && roles.id!=null) {
+                $.ajax({
+                    url: "https://localhost:5001/api/users/roles",
+                    type: "PUT",
+                    contentType: 'application/json; charset=UTF-8',
+                    data: JSON.stringify(roles),
+                    success: () => {
+                        swal({
+                            title: "Assign Success",
+                            text: "Hihi!",
+                            icon: "success",
+                            type: "OK"
+                        });
+                    }
+                })
+            }
+        }
     </script>
 }
 <h2 onclick="getListCourse(true)" data-toggle="modal" data-target="#createModal">Create</h2>
@@ -255,7 +282,7 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                <button class="btn btn-primary" id="classAssign" onclick="assignUser()" type="button">Assign</button>
+                <button class="btn btn-primary" id="classAssign" onclick="AssignUserApi()" type="button">Assign</button>
             </div>
         </div>
     </div>
