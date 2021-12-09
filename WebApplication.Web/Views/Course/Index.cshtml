@@ -1,19 +1,19 @@
-﻿
+﻿@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
+*@
 @{
-    ViewData["Title"] = "Topics";
+    ViewData["Title"] = "Course";
     Layout = "~/Views/Shared/_Layout_admin.cshtml";
-    ViewData["head-title"] = "Topic Control";
+    ViewData["head-title"] = "Course Control";
 }
-@section Scripts{
+@section Scripts {
     <script>
         let currentPage = 1;
-        function getAllTopic(filter, page) {
+        function getAllCourse(filter, page) {
             let html = "";
             currentPage = page;
             $.ajax({
-                url: `https://localhost:5001/api/Topics?SkipCount=${currentPage}&Filter=${filter}`,
+                url: `https://localhost:5001/api/Courses?SkipCount=${page}&MaxResultCount=10&Filter=${filter}`,
                 type: "GET",
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader("Authorization", "Bearer " + user.accessToken);
@@ -23,10 +23,11 @@
                     renderPagination(datas.totalCount, page);
                     for (var data of datas.items) {
                         const updateTime = data.updateTime == null ? "No Time Update" : moment(data.updateTime).format("DD/MM/YYYY");
+                        const createTime = data.createTime == null ? "No Time Create" : moment(data.createTime).format("DD/MM/YYYY");
                         html += `<tr>
                                          <th scope="row">`+ data.name + `</th>
                                          <td>`+ data.description + `</td>
-                                         <td>`+ moment(data.createTime).format("DD/MM/YYYY") + `</td>
+                                         <td>`+ createTime + `</td>
                                          <td>`+ updateTime + `</td>
                                          <td><img class='image-topic' src=https://localhost:5001/store-image/`+ data.image + ` /></td>
                                          <td class='action-center' scope="col">
@@ -36,29 +37,57 @@
                                          </button>
                                          <div class="dropdown-menu">
                                          <a class="dropdown-item" onclick='showModalUpdate(${JSON.stringify(data)})'>Update</a>
-                                         <a class="dropdown-item" onclick='deleteTopic(${JSON.stringify(data.id)})'>Delete</a>
+                                         <a class="dropdown-item" onclick='deleteCourse(${JSON.stringify(data.id)})'>Delete</a>
                                          <div class="dropdown-divider"></div>
                                          </div>
                                          </div>
                                          </td>
-                                       </tr>`;
+                                 /tr>`;
                     }
-                    $("#body-topic").html(html);
-                    $("#tabletopic").show();
+                    $("#body-course").html(html);
+                    $("#tablecourse").removeClass("d-none");
                     $("#spinLoaded").hide();
                 }
             })
         }
-        getAllTopic('', currentPage);
+        getAllCourse('', currentPage);
+        //Delete
+        function deleteCourse(id) {
+            currentIdelete = id;
+            $("#deleteModal").modal("show");
+        }
+        function confirmDelete() {
+            $.ajax({
+                url: "https://localhost:5001/api/Courses/" + currentIdelete,
+                type: "DELETE",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Authorization", "Bearer " + user.accessToken);
+                },
+                success: response => {
+                    swal({
+                        title: "Delete Success",
+                        text: "Hihi!",
+                        icon: "success",
+                        type: "OK"
+                    })
+                    $("#deleteModal").modal("hide");
+                    getAllCourse('', currentPage);
+                }
+            })
+        }
+        let currentIdelete;
+
+        //add
+        getAllCourse('', currentPage);
         console.log(user.accessToken)
         function getListCourse(flag) {
             if (flag == true) {
                 $("#update").hide();
                 $("#create").show();
-                $("#modallabelTopic").text("Add topic");
+                $("#modallabelCourse").text("Add course");
             }
             $.ajax({
-                url: "https://localhost:5001/api/Courses/all?MaxResultCount=100",
+                url: "https://localhost:5001/api/Courses/",
                 type: "GET",
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader("Authorization", "Bearer " + user.accessToken);
@@ -69,19 +98,17 @@
                     for (let i of response.items) {
                         html += `<option value='` + i.id + `'>` + i.name + `</option>`
                     }
-                    $("#inputState").html(html)
                 }
             })
         }
-        function addNewTopic() {
+        function addNewCourse() {
             var formData = new FormData();
             formData.append('name', $("#name").val());
             formData.append('description', $("#description").val());
             formData.append('image', $("#image")[0].files[0]);
-            formData.append('courseId', $("#inputState").val());
             $("#image-cd").show();
             $.ajax({
-                url: `https://localhost:5001/api/Topics`,
+                url: `https://localhost:5001/api/Courses`,
                 type: "POST",
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader("Authorization", "Bearer " + user.accessToken);
@@ -95,10 +122,9 @@
                         icon: "success",
                         type: "OK"
                     })
-                    getAllTopic('', currentPage);
+                    getAllCourse('', currentPage);
                     $("#name").val();
                     $("#description").val();
-                    $("#inputState").val();
                     $("#image")[0].files[0];
                 },
                 cache: false,
@@ -107,30 +133,29 @@
             })
         }
         let currentValueUpdate;
-
+        //Update
         function showModalUpdate(data) {
             $("#create").hide();
             $("#update").show();
             getListCourse(false);
             console.log("vo");
-            $("#modallabelTopic").text("Update topic");
+            $("#modallabelCourse").text("Update course");
             $("#createModal").modal("show");
             $("#name").val(data.name);
             $("#description").val(data.description);
             $("#image-cd").hide();
             currentValueUpdate = data;
         }
-        function updateTopic(data) {
+        function updateCourse(data) {
             const newdata = {
                 "id": data.id,
                 "name": $("#name").val(),
                 "description": $("#description").val(),
-                "courseId": $("#inputState").val()
             }
             console.log(newdata);
             $.ajax({
                 contentType: 'application/json; charset=UTF-8',
-                url: `https://localhost:5001/api/Topics`,
+                url: `https://localhost:5001/api/Courses`,
                 type: "PUT",
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader("Authorization", "Bearer " + user.accessToken);
@@ -145,67 +170,43 @@
                         icon: "success",
                         type: "OK"
                     })
-                    getAllTopic('', currentPage);
+                    getAllCourse('', currentPage);
                     $("#name").val();
                     $("#description").val();
-                    $("#inputState").val();
                 },
                 cache: false,
                 processData: false
             })
         }
-        function deleteTopic(id) {
-            currentIdelete = id;
-            $("#deleteModal").modal("show");
-        }
-        function confirmDelete() {
-            $.ajax({
-                url: "https://localhost:5001/api/Topics/" + currentIdelete,
-                type: "DELETE",
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader("Authorization", "Bearer " + user.accessToken);
-                },
-                success: response => {
-                    swal({
-                        title: "Delete Success",
-                        text: "Hihi!",
-                        icon: "success",
-                        type: "OK"
-                    })
-                    $("#deleteModal").modal("hide");
-                    getAllTopic('', currentPage);
-                }
-            })
-        }
-        let currentIdelete;
-       
     </script>
 }
+
 <h2 onclick="getListCourse(true)" data-toggle="modal" data-target="#createModal">Create</h2>
 <div class="justify-content-center" style="display:flex" id="spinLoaded">
     <div class="spinner-border text-success " role="status">
         <span class="sr-only">Loading...</span>
     </div>
 </div>
-<table id="tabletopic" style="display:none" class="table table-striped table-hover">
+<table id="tablecourse"  class="d-none table table-striped table-hover">
     <thead style=" background: rebeccapurple;">
         <tr>
-            <th scope="col">Topic Name</th>
-            <th scope="col">Topic Description</th>
+            <th scope="col">Course Name</th>
+            <th scope="col">Course Description</th>
             <th scope="col">Create Time</th>
             <th scope="col">Update Time</th>
-            <th scope="col">Topic Image</th>
+            <th scope="col">Course Image</th>
             <th scope="col" class="text-center">Action</th>
         </tr>
     </thead>
-    <tbody id="body-topic">
+    <tbody id="body-course">
     </tbody>
 </table>
 <nav aria-label="Page navigation example">
     <ul class="pagination" id="paginationTopic">
     </ul>
 </nav>
- Logout Modal
+
+<!-- Delete -->
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
      aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -227,41 +228,37 @@
     </div>
 </div>
 
- Logout Modal
+
 <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
      aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modallabelTopic">New Topic</h5>
+                <h5 class="modal-title" id="modallabelCourse">New Course</h5>
                 <button class="close" type="button" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">×</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form id="addNewTopic" method="post" enctype="multipart/form-data">
+                <form id="addNewCourse" method="post" enctype="multipart/form-data">
                     <div class="form-group">
-                        <label for="name">Topic Name</label>
+                        <label for="name">Course Name</label>
                         <input type="text" class="form-control" id="name" aria-describedby="emailHelp" placeholder="Enter email">
                     </div>
                     <div class="form-group">
-                        <label for="description">Topic Description</label>
+                        <label for="description">Course Description</label>
                         <input type="text" class="form-control" id="description" placeholder="Password">
                     </div>
                     <div class="form-group" id="image-cd">
-                        <label for="image">Topic Image</label>
+                        <label for="image">Course Image</label>
                         <input type="file" class="form-control-file" id="image">
-                    </div>
-                    <div class="form-group">
-                        <label for="inputState">Course</label>
-                        <select id="inputState" class="form-control form-control-sm"></select>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                <button class="btn btn-primary" id="create" onclick="addNewTopic()" type="button">Create</button>
-                <button class="btn btn-primary" id="update" onclick="updateTopic(currentValueUpdate)" type="button">Update</button>
+                <button class="btn btn-primary" id="create" onclick="addNewCourse()" type="button">Create</button>
+                <button class="btn btn-primary" id="update" onclick="updateCourse(currentValueUpdate)" type="button">Update</button>
             </div>
         </div>
     </div>
