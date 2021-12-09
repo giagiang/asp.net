@@ -46,7 +46,7 @@ namespace WebApplication.WebApi.Services
             _userManager = userManager;
             _mapper = mapper;
             _managementDbContext = managementDbContext;
-            UserId = httpContextAccessor.HttpContext.User.Identity.IsAuthenticated? new Guid(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value):Guid.Empty;
+            UserId = httpContextAccessor.HttpContext.User.Identity.IsAuthenticated ? new Guid(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value) : Guid.Empty;
         }
 
         private async Task<string> SaveFile(IFormFile file)
@@ -128,7 +128,7 @@ namespace WebApplication.WebApi.Services
         public async Task<CourseVm> UpdateAsync(UpdateCourseDto dto)
         {
             var course = await _managementDbContext.Courses.FindAsync(dto.Id);
-            if (course != null) return null;
+            if (course == null) return null;
             course.Name = dto.Name;
             course.UpdateTime = DateTime.Now;
             course.Description = dto.Description;
