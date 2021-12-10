@@ -101,8 +101,8 @@ namespace WebApplication.WebApi.Services
 
         public async Task<ClassVm> UpdateAsync(UpdateClassDto dto)
         {
-            var topic = await _managementDbContext.Topics.FindAsync(dto.Id);
-            if (topic != null) return null;
+            var topic = await _managementDbContext.Classes.FindAsync(dto.Id);
+            if (topic == null) return null;
             topic.Name = dto.Name;
             topic.UpdateTime = DateTime.Now;
             topic.Description = dto.Description;
