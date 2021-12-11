@@ -22,27 +22,27 @@
                     console.log(datas.totalCount)
                     renderPagination(datas.totalCount, page);
                     for (var data of datas.items) {
-                        const updateTime = data.updateTime == null ? "No Time Update" : moment(data.updateTime).format("DD/MM/YYY");
+                        const updateTime = data.updateTime == null ? "No Time Update" : moment(data.updateTime).format("DD/MM/YYYY");
                         html += `<tr>
-                                                                         <th scope="row">`+ data.name + `</th>
-                                                                         <td>`+ data.description + `</td>
-                                                                         <td>`+ moment(data.createTime).format("DD/MM/YYY") + `</td>
-                                                                         <td>`+ updateTime + `</td>
-                                                                         <td class='action-center' scope="col">
-                                                                            <div class="btn-group">
-                                                                                <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                                                                    Action
-                                                                                </button>
-                                                                                <div class="dropdown-menu">
-                                                                                    <a class="dropdown-item" onclick='detailClass(${JSON.stringify(data)})'>Detail</a>
-                                                                                    <a class="dropdown-item" onclick='showModalUpdate(${JSON.stringify(data)})'>Update</a>
-                                                                                    <a class="dropdown-item" onclick='deleteClass(${JSON.stringify(data.id)})'>Delete</a>
-                                                                                    <div class="dropdown-divider"></div>
-                                                                                    <a class="dropdown-item" href="#">Separated link</a>
-                                                                                </div>
-                                                                            </div>
-                                                                           </td>
-                                                                           </tr>`;
+                                                                                     <th scope="row">`+ data.name + `</th>
+                                                                                     <td>`+ data.description + `</td>
+                                                                                     <td>`+ moment(data.createTime).format("DD/MM/YYYY") + `</td>
+                                                                                     <td>`+ updateTime + `</td>
+                                                                                     <td class='action-center' scope="col">
+                                                                                        <div class="btn-group">
+                                                                                            <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                                                                Action
+                                                                                            </button>
+                                                                                            <div class="dropdown-menu">
+                                                                                                <a class="dropdown-item" onclick='detailClass(${JSON.stringify(data)})'>Detail</a>
+                                                                                                <a class="dropdown-item" onclick='showModalUpdate(${JSON.stringify(data)})'>Update</a>
+                                                                                                <a class="dropdown-item" onclick='deleteClass(${JSON.stringify(data.id)})'>Delete</a>
+                                                                                                <div class="dropdown-divider"></div>
+                                                                                                
+                                                                                            </div>
+                                                                                        </div>
+                                                                                       </td>
+                                                                                       </tr>`;
                     }
                     $("#body-class").html(html);
                     $("#tableclass").removeClass("d-none");
@@ -51,6 +51,103 @@
             })
         }
         getAllClass('', currentPage);
+
+
+        //add
+        getAllClass('', currentPage);
+        console.log(user.accessToken)
+        function getListClass(flag) {
+            if (flag == true) {
+                $("#update").hide();
+                $("#create").show();
+                $("#modallabelClass").text("Add class");
+            }
+            $.ajax({
+                url: "https://localhost:5001/api/Classes/",
+                type: "GET",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Authorization", "Bearer " + user.accessToken);
+                },
+                success: response => {
+                    console.log(response);
+                    let html = "<option selected></option>";
+                    for (let i of response.items) {
+                        html += `<option value='` + i.id + `'>` + i.name + `</option>`
+                    }
+                }
+            })
+        }
+        function addNewClass() {
+            $.ajax({
+                url: `https://localhost:5001/api/Classes`,
+                type: "POST",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Authorization", "Bearer " + user.accessToken);
+                },
+                data: JSON.stringify({
+                    "name": $("#name").val(),
+                    "description": $("#description").val()}),
+                success: response => {
+                    $("#createModal").modal("hide");
+                    swal({
+                        title: "Create Success",
+                        text: "Hihi!",
+                        icon: "success",
+                        type: "OK"
+                    })
+                    getAllClass('', currentPage);
+                    $("#name").val();
+                    $("#description").val();
+                },
+                cache: false,
+                contentType: 'application/json; charset=utf-8',
+            
+            })
+        }
+        let currentValueUpdate;
+        //Update
+        function showModalUpdate(data) {
+            $("#create").hide();
+            $("#update").show();
+            getListClass(false);
+            console.log("vo");
+            $("#modallabelClass").text("Update class");
+            $("#createModal").modal("show");
+            $("#name").val(data.name);
+            $("#description").val(data.description);
+            currentValueUpdate = data;
+        }
+        function updateClass(data) {
+            const newdata = {
+                "id": data.id,
+                "name": $("#name").val(),
+                "description": $("#description").val(),
+            }
+            console.log(newdata);
+            $.ajax({
+                contentType: 'application/json; charset=UTF-8',
+                url: `https://localhost:5001/api/Classes`,
+                type: "PUT",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Authorization", "Bearer " + user.accessToken);
+                },
+                dataType: "json",
+                data: JSON.stringify(newdata),
+                success: response => {
+                    $("#createModal").modal("hide");
+                    swal({
+                        title: "Update Success",
+                        text: "Hihi!",
+                        icon: "success",
+                        type: "OK"
+                    })
+                    getAllClass('', currentPage);
+                    $("#name").val();
+                    $("#description").val();
+                },
+                cache: false,
+            })
+        }
 
         //Delete
 
@@ -90,6 +187,7 @@
             }
             $("#listClass").html(htmlDetailClass)
         }
+
     </script>
 }
 
@@ -139,8 +237,7 @@
     </div>
 </div>
 
-
-
+<!-- Detail -->
 <div class="modal fade" id="ClassDetail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
      aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -151,7 +248,7 @@
                     <span aria-hidden="true">×</span>
                 </button>
             </div>
-            <div class="modal-body" >
+            <div class="modal-body">
                 <table class="table">
                     <tr>
                         <th>Tên Học sinh</th>
@@ -159,12 +256,43 @@
                         <th class="text-center">Action</th>
                     </tr>
                     <tbody id="listClass">
-
                     </tbody>
                 </table>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Update and Add -->
+<div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modallabelClass">New Class</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addNewClass" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="name">Class Name</label>
+                        <input type="text" class="form-control" id="name" placeholder="Enter name of class">
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Class Description</label>
+                        <input type="text" class="form-control" id="description" placeholder="Enter description of class">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <button class="btn btn-primary" id="create" onclick="addNewClass()" type="button">Create</button>
+                <button class="btn btn-primary" id="update" onclick="updateClass(currentValueUpdate)" type="button">Update</button>
             </div>
         </div>
     </div>
