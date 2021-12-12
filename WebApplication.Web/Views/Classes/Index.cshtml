@@ -58,8 +58,8 @@
         console.log(user.accessToken)
         function getListClass(flag) {
             if (flag == true) {
-                $("#update").hide();
-                $("#create").show();
+                $("#updateClass").hide();
+                $("#createClass").show();
                 $("#modallabelClass").text("Add class");
             }
             $.ajax({
@@ -107,8 +107,8 @@
         let currentValueUpdate;
         //Update
         function showModalUpdate(data) {
-            $("#create").hide();
-            $("#update").show();
+            $("#createClass").hide();
+            $("#updateClass").show();
             getListClass(false);
             console.log("vo");
             $("#modallabelClass").text("Update class");
@@ -291,8 +291,8 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                <button class="btn btn-primary" id="create" onclick="addNewClass()" type="button">Create</button>
-                <button class="btn btn-primary" id="update" onclick="updateClass(currentValueUpdate)" type="button">Update</button>
+                <button class="btn btn-primary" id="createClass" onclick="addNewClass()" type="button">Create</button>
+                <button class="btn btn-primary" id="updateClass" onclick="updateClass(currentValueUpdate)" type="button">Update</button>
             </div>
         </div>
     </div>

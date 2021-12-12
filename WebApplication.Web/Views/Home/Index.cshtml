@@ -1,95 +1,64 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_Layout_trainee.cshtml";
 }
 
 @section Scripts{
     <script>
         let html = "";
         const urlImg = "https://localhost:5001/store-image/";
+        console.log(user.id)
         $.ajax({
-            url: "https://localhost:5001/api/Topics",
+            url: "https://localhost:5001/api/Users/GetCourseByUserId?Id="+user.id,
             type: "GET",
             success: function (response) {
-                console.log(response.items)
-                for (let i of response.items) {
-                    html += `<div class="col span-1-of-3 about-picture">
-                                        <img src=`+urlImg+i.courses.image +` class="card-img-top margin-auto" alt="alternativeffff">
-                                        <div class="card-body">
-                                            <h4 class="card-title pt-3 title-edit">`+ i.name + `</h4>
-                                            <p class="card-text text-edit text-cardedit">`+ i.courses.name + `<br> ` + i.description + `</p>
-                                            <a href="#" class="btn btn-center btn-primary pt-3 margin-auto">Go somewhere</a>
-                                        </div>
-                                    </div>`
+                console.log(response)
+                for (let i of response.resultObj.courses) {
+                    html += `<tr>
+                          <td>${i.name}</td>
+                          <td>${i.description}</td>
+                          <td><img src=${urlImg+i.image} style="height:50px;width:100px" /></td>
+                          <td>${moment(i.start_Date).format("DD/MM/YYYY")}</td>
+                          <td>${moment(i.end_Date).format("DD/MM/YYYY")}</td>
+                          <td>${moment(i.createTime).format("DD/MM/YYYY")}</td>
+                          <td><label class="badge badge-danger">Pending</label></td>
+                        </tr>`
                 }
                 console.log(moment().format())
                 $("#content").html(html);
             }
         })
-
-        $(document).ready(() => {
-            const dataLocalStorage = sessionStorage.getItem("user");
-            if (dataLocalStorage == undefined) {
-                $("#login").html(`<a class="nav-link text-dark" asp-area="" href='/account/login'>Login</a>`);
-            }
-            if (dataLocalStorage) {
-                console.log("vo")
-                $("#logout").html(`<a class="nav-link text-dark" asp-area="" onclick="sessionStorage.removeItem('user')" href='/'>Logout</a>`);
-            }
-        })
     </script>
 }
 
-<section class="Courses-section" id="Courses">
+<section>
     <div class="row">
-        <h2>Courses</h2>
-        <div id="content"></div>
-    </div>
-</section>
-<section class="contact-section" id="contact">
-    <div class="row">
-        <div class="col span-1-of-3">
-            <ul class="information">
-                <li> <i class="fas fa-map-market-alt"></i>Address: 21A, fastboy street, Thanh Hoa</li>
-                <li> <i class="fas fa-envelope"></i> Email: fastboyteam@edu.com</li>
-                <li> <i class="fas fa-phone"></i>Phone Number:096-234-4567</li>
-            </ul>
-            <ul class="social-icons">
-                <li><i class="fab fa-facebook"></i></li>
-                <li><i class="fab fa-twitter-square"></i></li>
-                <li><i class="fab fa-instagram"></i></li>
-                <li><i class="fab fa-google-plus-square"></i></li>
-            </ul>
-        </div>
-        <div class="col span-2-of-3">
-            <form>
-                <div class="row">
-                    <div class="col span-1-of-3">
-                        <label>Name</label>
-                    </div>
-                    <div class="col span-2-of-3">
-                        <input type="text" placeholder="Your Name">
-                    </div>
+      <div class="col-lg-12 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Courses Table</h4>
+                  <p class="card-description">
+                    Add Course <code>.Create</code>
+                  </p>
+                  <div class="table-responsive">
+                    <table class="table table-hover">
+                      <thead>
+                        <tr>
+                          <th>Course Name</th>
+                          <th>Course Description</th>
+                          <th>Course Image/th>
+                          <th>Start Date</th>
+                          <th>End Date</th>
+                          <th>Creation Time</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody id="content">
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-                <div class="row">
-                    <div class="col span-1-of-3">
-                        <label> Email</label>
-                    </div>
-                    <div class="col span-2-of-3">
-                        <input type="text" placeholder="Your Email">
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col span-1-of-3">
-                        <label> Message</label>
-                    </div>
-                    <div class="col span-2-of-3">
-                        <textarea placeholder="Your Message"></textarea>
-                    </div>
-                </div>
-                <div class="row">
-                    <input type="submit" class="btn" value="Sent It">
-                </div>
-            </form>
-        </div>
+              </div>
+            </div>
     </div>
 </section>

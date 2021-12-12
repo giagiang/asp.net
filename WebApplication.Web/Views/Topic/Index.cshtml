@@ -53,8 +53,8 @@
         console.log(user.accessToken)
         function getListCourse(flag) {
             if (flag == true) {
-                $("#update").hide();
-                $("#create").show();
+                $("#updateTopic").hide();
+                $("#createTopic").show();
                 $("#modallabelTopic").text("Add topic");
             }
             $.ajax({
@@ -109,8 +109,8 @@
         let currentValueUpdate;
 
         function showModalUpdate(data) {
-            $("#create").hide();
-            $("#update").show();
+            $("#createTopic").hide();
+            $("#updateTopic").show();
             getListCourse(false);
             console.log("vo");
             $("#modallabelTopic").text("Update topic");
@@ -261,8 +261,8 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                <button class="btn btn-primary" id="create" onclick="addNewTopic()" type="button">Create</button>
-                <button class="btn btn-primary" id="update" onclick="updateTopic(currentValueUpdate)" type="button">Update</button>
+                <button class="btn btn-primary" id="createTopic" onclick="addNewTopic()" type="button">Create</button>
+                <button class="btn btn-primary" id="updateTopic" onclick="updateTopic(currentValueUpdate)" type="button">Update</button>
             </div>
         </div>
     </div>

@@ -18,12 +18,20 @@
         <!-- Login Form -->
         <div>
             <input type="text" id="username" class="fadeIn second" name="login" placeholder="login" value="admin">
-            <input type="text" id="password" class="fadeIn third" name="pass" placeholder="password" value="1">
+            <input type="password" id="password" class="fadeIn third" name="pass" placeholder="password" value="1">
             <input type="submit" class="fadeIn fourth" value="Log In" id="loign">
-
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-            <script>
+         
+        </div>
+        <!-- Remind Passowrd -->
+        <div id="formFooter">
+            <a class="underlineHover" href="#">Forgot Password?</a>
+        </div>
+    </div>
+</div>
+  <script src="~/lib/jquery/dist/jquery.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+   <script>
                 $("#loign").click(() => {
                     $.ajax({
                         url: "https://localhost:5001/api/Users/Authenticate",
@@ -40,7 +48,7 @@
                                     icon: "success",
                                     type: "OK"
                                 }).then(function () {
-                                    window.location = "/account";
+                                    window.location = "/Admin";
                                 });
                             }
                             else {
@@ -72,10 +80,3 @@
                     })
                 })
             </script>
-        </div>
-        <!-- Remind Passowrd -->
-        <div id="formFooter">
-            <a class="underlineHover" href="#">Forgot Password?</a>
-        </div>
-    </div>
-</div>
