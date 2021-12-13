@@ -44,6 +44,7 @@ namespace WebApplication.WebApi.Services
         Task<ApiResult<bool>> ClassAssign(ClassAssignRequest request);
 
         Task<ApiResult<UserCourseVm>> GetCourseByIdUser(Guid Id);
+        Task<ApiResult<UserClassVm>> GetCLassByIdUser(Guid Id);
     }
 
     public class UserService : IUserService
@@ -294,18 +295,18 @@ namespace WebApplication.WebApi.Services
             return new ApiSuccessResult<UserCourseVm>(result);
         }
 
-        public async Task<ApiResult<UserCourseVm>> GetCLassByIdUser(Guid Id)
+        public async Task<ApiResult<UserClassVm>> GetCLassByIdUser(Guid Id)
         {
             var user = await _userManager.FindByIdAsync(Id.ToString());
-            if (user == null) return new ApiErrorResult<UserCourseVm>("can't find user");
+            if (user == null) return new ApiErrorResult<UserClassVm>("can't find user");
             var query = from u in _userManager.Users
                         join uc in _managementDbContext.UserClasses on u.Id equals uc.UserId
-                        join c in _managementDbContext.Courses on uc.ClassId equals c.Id
+                        join c in _managementDbContext.Classes on uc.ClassId equals c.Id
                         where u.Id.Equals(Id)
                         select new { u, uc, c };
-            var result = await query.Select(x => new UserCourseVm()
+            var result = await query.Select(x => new UserClassVm()
             {
-                Courses = _mapper.Map<List<CourseVm>>(x.u.UserClasses.Select(x => x.Class)),
+                Classes = _mapper.Map<List<ClassVm>>(x.u.UserClasses.Select(x => x.Class)),
                 Email = x.u.Email,
                 FullName = x.u.FullName,
                 Id = x.u.Id,
@@ -313,7 +314,7 @@ namespace WebApplication.WebApi.Services
                 UserName = x.u.UserName
             }).FirstOrDefaultAsync();
 
-            return new ApiSuccessResult<UserCourseVm>(result);
+            return new ApiSuccessResult<UserClassVm>(result);
         }
     }
 }

@@ -110,5 +110,10 @@ namespace WebApplication.WebApi.Controllers
         {
             return Ok(await _userService.GetCourseByIdUser(Id));
         }
+        [HttpGet("GetClassByUserId")]
+        public async Task<IActionResult> GetClassByUserId(Guid Id)
+        {
+            return Ok(await _userService.GetCLassByIdUser(Id));
+        }
     }
 }
