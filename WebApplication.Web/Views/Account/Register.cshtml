@@ -2,75 +2,136 @@
     Layout = null;
 }
 <head>
-    <link rel="stylesheet" href="~/css/login.css">
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Sign up Page</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="~/Trainee/vendors/feather/feather.css">
+    <link rel="stylesheet" href="~/Trainee/vendors/mdi/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="~/Trainee/vendors/ti-icons/css/themify-icons.css">
+    <link rel="stylesheet" href="~/Trainee/vendors/typicons/typicons.css">
+    <link rel="stylesheet" href="~/Trainee/vendors/simple-line-icons/css/simple-line-icons.css">
+    <link rel="stylesheet" href="~/Trainee/vendors/css/vendor.bundle.base.css/">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <link rel="stylesheet" href="~/Trainee/css/vertical-layout-light/style.css">
+    <!-- endinject -->
+    <link rel="shortcut icon" href="~/Trainee/images/favicon.png" />
 </head>
 
-<div class="wrapper fadeInDown">
-    <div id="formContent">
-        <!-- Tabs Titles -->
-        <h2 class="inactive underlineHover"><a href="Login">Sign In</a></h2>
-        <h2 class="active">Sign Up </h2>
 
-        <!-- Icon -->
-        <div class="fadeIn first">
-            <img src="~/image/icon.png" width="40px" height="40px" alt="User Icon" />
+<body>
+    <div class="container-scroller">
+        <div class="container-fluid page-body-wrapper full-page-wrapper">
+            <div class="content-wrapper d-flex align-items-center auth px-0">
+                <div class="row w-100 mx-0">
+                    <div class="col-lg-4 mx-auto">
+                        <div class="auth-form-light text-left py-5 px-4 px-sm-5">
+                            <div class="brand-logo">
+                                <img src="~/Trainee/images/logo.svg" alt="logo">
+                            </div>
+                            <h4>Hello! let's get started</h4>
+                            <h6 class="fw-light">Sign up to continue.</h6>
+                            <form class="pt-3">
+                                <div class="form-group">
+                                    <input type="email" class="form-control form-control-lg" id="username" name="login" placeholder="Username">
+                                </div>
+                                <div class="form-group">
+                                    <input type="password" class="form-control form-control-lg" id="password" name="pass" placeholder="Password">
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control form-control-lg" id="email" name="email" placeholder="Email">
+                                </div>
+                                <div class="mt-3">
+                                    <input type="submit" class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn" value="SIGIN UP" id="signUp">
+                                </div>
+                                <div class="my-2 d-flex justify-content-between align-items-center">
+                                    <div class="form-check">
+                                        <label class="form-check-label text-muted">
+                                            <input type="checkbox" class="form-check-input">
+                                            Keep me signed in
+                                        </label>
+                                    </div>
+                                    <a href="#" class="auth-link text-black">Forgot password?</a>
+                                </div>
+                                <div class="mb-2">
+                                    <button type="button" class="btn btn-block btn-facebook auth-form-btn">
+                                        <i class="ti-facebook me-2"></i>Connect using facebook
+                                    </button>
+                                </div>
+                                <div class="text-center mt-4 fw-light">
+                                    If you have an account? <a href="Login" class="text-primary">Login</a>
+                                </div>
+
+                                @*hehehe*@
+                                <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+                                <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+                                <script>
+                                    $("#signUp").click(() => {
+                                        $.ajax({
+                                            url: "https://localhost:5001/api/Users",
+                                            type: "post",
+                                            data: JSON.stringify({ userName: $("#username").val(), password: $("#password").val(), email: $("#email").val() }),
+                                            contentType: "application/json",
+                                            success: function (response) {
+                                                console.log(response);
+                                                if (response === true) {
+                                                    swal({
+                                                        title: "Sign up Success!",
+                                                        text: "Welcome to Group 2",
+                                                        icon: "success",
+                                                        type: "OK"
+                                                    }).then(function () {
+                                                        window.location = "login";
+                                                    });
+
+                                                }
+                                                else {
+                                                    window.swal("Sign Up Fail", "Please try again!", "success", {
+                                                        button: "OK",
+
+                                                    });
+                                                }
+                                                // nếu vào success thì. Đạt phải Điều hướng người dùng tới trang home,
+                                                // Nếu role là admin thì vào trang của admin
+                                                // ngược lại vào home mặc định
+
+                                            },
+                                            error: function (err) {
+                                                console.log(err);
+
+                                                // Nếu như sai mật khẩu hoặc tài khoản nó sẽ vào đây... Nếu nó vào đây
+                                                // Đạt phải thông báo cho người dùng là sai nhập mật
+                                            }
+                                        })
+                                    })
+                                </script>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- content-wrapper ends -->
         </div>
-
-        <!-- Register Form -->
-        <div>
-            <input type="text" id="username" class="fadeIn second" name="login" placeholder="login" value="dat">
-            <input type="text" id="password" class="fadeIn third" name="pass" placeholder="password" value="Dat@123456">
-            <input type="text" id="email" class="fadeIn third" name="email" placeholder="email" value="dat@gmail.com">
-            <input type="submit" class="fadeIn fourth" value="Sign Up" id="signUp">
-
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-            <script>
-                $("#signUp").click(() => {
-                    $.ajax({
-                        url: "https://localhost:5001/api/Users",
-                        type: "post",
-                        data: JSON.stringify({ userName: $("#username").val(), password: $("#password").val(), email: $("#email").val() }),
-                        contentType: "application/json",
-                        success: function (response) {
-                            console.log(response);
-                            if (response === true) {
-                                swal({
-                                    title: "Sign up Success!",
-                                    text: "Welcome to Group 2",
-                                    icon: "success",
-                                    type: "OK"
-                                }).then(function () {
-                                    window.location = "login";
-                                });
-
-                            }
-                            else {
-                                window.swal("Sign Up Fail", "Please try again!", "success", {
-                                    button: "OK",
-
-                                });
-                            }
-                            // nếu vào success thì. Đạt phải Điều hướng người dùng tới trang home,
-                            // Nếu role là admin thì vào trang của admin
-                            // ngược lại vào home mặc định
-
-                        },
-                        error: function (err) {
-                            console.log(err);
-
-                            // Nếu như sai mật khẩu hoặc tài khoản nó sẽ vào đây... Nếu nó vào đây
-                            // Đạt phải thông báo cho người dùng là sai nhập mật
-                        }
-                    })
-                })
-            </script>
-        </div>
-
-        <!-- Remind Passowrd -->
-        <div id="formFooter">
-            <a class="underlineHover" href="#">Welcome to Group 2</a>
-        </div>
-
+        <!-- page-body-wrapper ends -->
     </div>
-</div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <script src="../../vendors/js/vendor.bundle.base.js"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page -->
+    <script src="../../vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+    <!-- End plugin js for this page -->
+    <!-- inject:js -->
+    <script src="../../js/off-canvas.js"></script>
+    <script src="../../js/hoverable-collapse.js"></script>
+    <script src="../../js/template.js"></script>
+    <script src="../../js/settings.js"></script>
+    <script src="../../js/todolist.js"></script>
+    <!-- endinject -->
+</body>
+
+
