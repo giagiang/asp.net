@@ -115,5 +115,10 @@ namespace WebApplication.WebApi.Controllers
         {
             return Ok(await _userService.GetCLassByIdUser(Id));
         }
+        [HttpPost("fotgotpassword")]
+        public async Task<IActionResult> ForgotPassword(ChangePasswordRequest request)
+        {
+            return Ok(await _userService.ForgotPassword(request));
+        }
     }
 }

@@ -45,6 +45,7 @@ namespace WebApplication.WebApi.Services
 
         Task<ApiResult<UserCourseVm>> GetCourseByIdUser(Guid Id);
         Task<ApiResult<UserClassVm>> GetCLassByIdUser(Guid Id);
+        Task<ApiResult<UserVm>> ForgotPassword(ChangePasswordRequest request);
     }
 
     public class UserService : IUserService
@@ -315,6 +316,18 @@ namespace WebApplication.WebApi.Services
             }).FirstOrDefaultAsync();
 
             return new ApiSuccessResult<UserClassVm>(result);
+        }
+
+        public async Task<ApiResult<UserVm>> ForgotPassword(ChangePasswordRequest request)
+        {
+            var user = await _userManager.FindByIdAsync(request.Id.ToString());
+            if (user == null) return new ApiErrorResult<UserVm>("Can't find this user");
+            var result=await _userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
+            if (result.Succeeded)
+            {
+                return new ApiSuccessResult<UserVm>();
+            }
+            return new ApiErrorResult<UserVm>("Current Password maybe wrong !!");
         }
     }
 }

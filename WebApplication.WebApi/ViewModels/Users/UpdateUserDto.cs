@@ -4,7 +4,6 @@
     {
         public string FullName { set; get; }
         public string Address { set; get; }
-        public string ImagePath { set; get; }
         public string Email { set; get; }
         public string PhoneNumber { set; get; }
     }
