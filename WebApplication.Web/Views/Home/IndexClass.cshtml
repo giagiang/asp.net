@@ -1,0 +1,61 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_Layout_trainee.cshtml";
+}
+
+@section Scripts{
+    <script>
+        let html = "";
+        console.log(user.id)
+        $.ajax({
+            url: "https://localhost:5001/api/Users/GetClassByUserId?Id="+user.id,
+            type: "GET",
+            success: function (response) {
+                console.log(response)
+                for (let i of response.resultObj.classes) {
+                    html += `<tr>
+                          <td>${i.name}</td>
+                          <td>${i.description}</td>
+                          <td>${moment(i.start_Date).format("DD/MM/YYYY")}</td>
+                          <td>${moment(i.end_Date).format("DD/MM/YYYY")}</td>
+                          <td>${moment(i.createTime).format("DD/MM/YYYY")}</td>
+                          <td><label class="badge badge-danger">Pending</label></td>
+                        </tr>`
+                }
+                console.log(moment().format())
+                $("#content").html(html);
+            }
+        })
+    </script>
+}
+
+<section>
+    <div class="row">
+      <div class="col-lg-12 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Class Table</h4>
+                  <p class="card-description">
+                    Add Class <code>.Create</code>
+                  </p>
+                  <div class="table-responsive">
+                    <table class="table table-hover">
+                      <thead>
+                        <tr>
+                          <th>Class Name</th>
+                          <th>Class Description</th>
+                          <th>Start Date</th>
+                          <th>End Date</th>
+                          <th>Creation Time</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody id="content">
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+    </div>
+</section>
