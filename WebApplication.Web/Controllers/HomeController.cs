@@ -16,7 +16,10 @@ namespace WebApplication.Web.Controllers
         {
             return View();
         }
-
+        public IActionResult IndexClass()
+        {
+            return View();
+        }
         public IActionResult Privacy()
         {
             return View();
