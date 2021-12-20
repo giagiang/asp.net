@@ -1,1 +1,3 @@
-﻿<StaticWebAssets Version="1.0" />
+﻿<StaticWebAssets Version="1.0">
+  <ContentRoot BasePath="_content/WebApplication.WebApi" Path="D:\BTEC\ad\win\Win-Ok\WebApplication.WebApi\wwwroot\" />
+</StaticWebAssets>

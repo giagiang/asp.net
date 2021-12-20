@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Co loan\\WebApplication\\WebApplication.Web\\WebApplication.Web.csproj": {}
+    "D:\\BTEC\\ad\\win\\Win-Ok\\WebApplication.Web\\WebApplication.Web.csproj": {}
   },
   "projects": {
-    "D:\\Co loan\\WebApplication\\WebApplication.WebApi\\WebApplication.WebApi.csproj": {
+    "D:\\BTEC\\ad\\win\\Win-Ok\\WebApplication.WebApi\\WebApplication.WebApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Co loan\\WebApplication\\WebApplication.WebApi\\WebApplication.WebApi.csproj",
+        "projectUniqueName": "D:\\BTEC\\ad\\win\\Win-Ok\\WebApplication.WebApi\\WebApplication.WebApi.csproj",
         "projectName": "WebApplication.WebApi",
-        "projectPath": "D:\\Co loan\\WebApplication\\WebApplication.WebApi\\WebApplication.WebApi.csproj",
-        "packagesPath": "C:\\Users\\huylo\\.nuget\\packages\\",
-        "outputPath": "D:\\Co loan\\WebApplication\\WebApplication.WebApi\\obj\\",
+        "projectPath": "D:\\BTEC\\ad\\win\\Win-Ok\\WebApplication.WebApi\\WebApplication.WebApi.csproj",
+        "packagesPath": "C:\\Users\\mason\\.nuget\\packages\\",
+        "outputPath": "D:\\BTEC\\ad\\win\\Win-Ok\\WebApplication.WebApi\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\huylo\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\mason\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -101,21 +101,21 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.401\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.403\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\Co loan\\WebApplication\\WebApplication.Web\\WebApplication.Web.csproj": {
+    "D:\\BTEC\\ad\\win\\Win-Ok\\WebApplication.Web\\WebApplication.Web.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Co loan\\WebApplication\\WebApplication.Web\\WebApplication.Web.csproj",
+        "projectUniqueName": "D:\\BTEC\\ad\\win\\Win-Ok\\WebApplication.Web\\WebApplication.Web.csproj",
         "projectName": "WebApplication.Web",
-        "projectPath": "D:\\Co loan\\WebApplication\\WebApplication.Web\\WebApplication.Web.csproj",
-        "packagesPath": "C:\\Users\\huylo\\.nuget\\packages\\",
-        "outputPath": "D:\\Co loan\\WebApplication\\WebApplication.Web\\obj\\",
+        "projectPath": "D:\\BTEC\\ad\\win\\Win-Ok\\WebApplication.Web\\WebApplication.Web.csproj",
+        "packagesPath": "C:\\Users\\mason\\.nuget\\packages\\",
+        "outputPath": "D:\\BTEC\\ad\\win\\Win-Ok\\WebApplication.Web\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\huylo\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\mason\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -129,8 +129,8 @@
           "net5.0": {
             "targetAlias": "net5.0",
             "projectReferences": {
-              "D:\\Co loan\\WebApplication\\WebApplication.WebApi\\WebApplication.WebApi.csproj": {
-                "projectPath": "D:\\Co loan\\WebApplication\\WebApplication.WebApi\\WebApplication.WebApi.csproj"
+              "D:\\BTEC\\ad\\win\\Win-Ok\\WebApplication.WebApi\\WebApplication.WebApi.csproj": {
+                "projectPath": "D:\\BTEC\\ad\\win\\Win-Ok\\WebApplication.WebApi\\WebApplication.WebApi.csproj"
               }
             }
           }
@@ -172,7 +172,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.401\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.403\\RuntimeIdentifierGraph.json"
         }
       }
     }
